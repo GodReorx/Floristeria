@@ -16,7 +16,7 @@ public class Ticket {
 
     public static Ticket getInstance() {
         if (instance == null) {
-            instance = new Tiket();
+            instance = new Ticket();
         }
         return instance;
     }
