@@ -2,33 +2,52 @@ package Connections.DAO;
 
 import FlowerStore.Interfaces.GardenElements;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class GardenElementsDAO<T extends GardenElements> implements GenericDAO {
     @Override
-    public T findById(int id) {
+    public GardenElements findById(int id) {
         // Implementa la lógica para encontrar un producto por su ID en la base de datos
         return null;
     }
 
     @Override
-    public List<T> findAll() {
-        // Implementa la lógica para encontrar todos los productos en la base de datos
+    public List<GardenElements> allGardenElements(int idFlowerStore) {
+        // Retorna todos los elementos que tiene en stock
         return null;
     }
 
     @Override
-    public void create(Object object) {
-        // Implementa la lógica para crear un nuevo producto en la base de datos
+    public int createStore(String name) {
+        //Crea una tienda nueva en la bbdd y retorna su ID
+        return 0;
     }
 
     @Override
-    public void update(Object object) {
-        // Implementa la lógica para actualizar un producto existente en la base de datos
+    public void addStock(GardenElements gardenElement, int quantity) {
+        // Agregar stock nuevo producto
     }
 
     @Override
-    public void delete(Object object) {
-        // Implementa la lógica para eliminar un producto existente de la base de datos
+    public void updateStock(GardenElements gardenElement, int quantity) {
+        // Update stock para un producto
+    }
+
+    @Override
+    public void deleteStock(GardenElements gardenElement) {
+        // Eliminar el stock completo
+    }
+
+    @Override
+    public HashMap<Integer, Date> allTickets(int idFlowerStore) {
+        //Buscar todos los tickets de la tienda activa
+        return null;
+    }
+
+    @Override
+    public void addTicket(int idFlowerstore, HashMap gardenElementsList) {
+        //Para añadir un ticket nuevo
     }
 }
