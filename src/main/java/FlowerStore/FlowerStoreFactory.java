@@ -1,9 +1,11 @@
 package FlowerStore;
 
 import FlowerStore.Interfaces.GardenElements;
-import FlowerStore.Interfaces.IFlowerStore;
+import FlowerStoreFactory.Products.Decoration;
+import FlowerStoreFactory.Products.Flower;
+import FlowerStoreFactory.Products.Tree;
 
-public class FlowerStoreFactory implements IFlowerStore {
+public class FlowerStoreFactory {
     private String name;
     public FlowerStoreFactory(String name){
         this.name = name;
@@ -17,16 +19,18 @@ public class FlowerStoreFactory implements IFlowerStore {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "FlowerStoreFactory{" +
-                "name='" + name + '\'' +
-                '}';
-    }
 
-    @Override
-    public GardenElements getElement(GardenElements element) {
-        //element.configure;
+
+
+
+    public GardenElements getElement(String type, String characteristic, double price, int quantity) {
+        GardenElements element = null;
+        switch(type.toUpperCase()) {
+            case "FLOWER" -> element = new Flower(characteristic, price, quantity);
+            case "DECORATION" -> element = new Decoration(characteristic, price, quantity);
+            case "TREES" -> element = new Tree(characteristic, price, quantity);
+            default -> throw new IllegalStateException("Unexpected value");
+        }
         return element;
     }
 }
