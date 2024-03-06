@@ -23,19 +23,17 @@ public class Ticket {
     public void addProductos (GardenElements producto, int quantity){
        productos.put(producto, quantity);
     }
-    public void removeProduct(GardenElements producto, int quantityToRemove) {
+    public void removeProducto(GardenElements producto, int quantity) {
         if (productos.containsKey(producto)) {
             int currentQuantity = productos.get(producto);
-            int updatedQuantity = currentQuantity - quantityToRemove;
-
-            if (updatedQuantity > 0) {
-                productos.put(producto, updatedQuantity);
+            if (currentQuantity <= quantity) {
+                productos.remove(producto);
             } else {
-                System.out.println("The quantity to be removed is greater than the current quantity of the product.");
+                productos.put(producto, currentQuantity - quantity);
             }
-            } else {
-                System.out.println("The product is not in inventory.");
-            }
+            System.out.println("The product removed was: " + producto + " - quantity: " + quantity);
+        } else {
+            System.out.println("The specif product, doesn't exist on ticket.");
         }
     }
     public int getProductosQuantity(GardenElements producto){
