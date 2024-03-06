@@ -6,11 +6,10 @@ public class Decoration implements GardenElements {
 
     private String typeMaterial;
     private double price;
-    private int quantity;
-    public Decoration(String typeMaterial, double price, int quantity){
+
+    public Decoration(String typeMaterial, double price){
         this.typeMaterial=typeMaterial;
         this.price=price;
-        this.quantity=quantity;
     }
 
     @Override
