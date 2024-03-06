@@ -1,6 +1,6 @@
 package FlowerStoreFactory.Products;
 
-import FlowerStoreFactory.Interfaces.GardenElements;
+import FlowerStore.Interfaces.GardenElements;
 
 public class Flower implements GardenElements {
 
