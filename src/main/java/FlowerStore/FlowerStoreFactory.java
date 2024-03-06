@@ -19,9 +19,12 @@ public class FlowerStoreFactory {
         this.name = name;
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return "FlowerStoreFactory{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 
     public GardenElements getElement(String type, String characteristic, double price, int quantity) {
         GardenElements element = null;
