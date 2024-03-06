@@ -6,12 +6,10 @@ public class Tree implements GardenElements {
 
     private String size;
     private double price;
-    private int quantity;
 
-    public Tree(String size, double price, int quantity) {
+    public Tree(String size, double price) {
         this.size=size;
         this.price=price;
-        this.quantity=quantity;
     }
 
 
