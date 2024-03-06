@@ -5,18 +5,22 @@ import FlowerStore.Interfaces.GardenElements;
 public class Flower implements GardenElements {
 
     private String color;
+    private double price;
+    private int quantity;
 
-    public Flower(String color){
-     this.color=color;;
+    public Flower(String color, double price, int quantity){
+        this.color=color;
+        this.price=price;
+        this.quantity=quantity;
     }
 
     @Override
-    public void displayCharacteristics() {
-        System.out.println("The flower color is: " + color);
+    public String getCharacteristics() {
+        return color;
     }
 
     @Override
-    public void getPrice(double price) {
-        System.out.println("The price of flower is: " + price);
+    public double getPrice() {
+        return price;
     }
 }

@@ -1,8 +1,8 @@
 package FlowerStore.Interfaces;
 
 public interface GardenElements {
-   void displayCharacteristics();
+   String getCharacteristics();
 
-   void getPrice(double price);
+   double getPrice();
 
 }

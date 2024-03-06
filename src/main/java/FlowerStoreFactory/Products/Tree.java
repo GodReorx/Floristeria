@@ -2,20 +2,22 @@ package FlowerStoreFactory.Products;
 
 import FlowerStore.Interfaces.GardenElements;
 
-public class Decoration implements GardenElements {
+public class Tree implements GardenElements {
 
-    private String typeMaterial;
+    private String size;
     private double price;
     private int quantity;
-    public Decoration(String typeMaterial, double price, int quantity){
-        this.typeMaterial=typeMaterial;
+
+    public Tree(String size, double price, int quantity) {
+        this.size=size;
         this.price=price;
         this.quantity=quantity;
     }
 
+
     @Override
     public String getCharacteristics() {
-        return typeMaterial;
+        return size;
     }
 
     @Override
