@@ -53,10 +53,9 @@ public class App {
         return seguirBucle;
 
     }
-    static FlowerStoreFactory createFlowerStore(){
+    static void createFlowerStore(){
         flowerStore = new FlowerStoreFactory(pedirNombre("Indicate the name of flowerStore"));
-        return flowerStore;
-
+        //No necesita return, ya modifica el objeto global (edu)
     }
 
 
