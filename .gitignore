@@ -15,6 +15,7 @@ build/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+src/main/java/Connections/MySQL/CONSTANTS.java
 
 ### Eclipse ###
 .apt_generated

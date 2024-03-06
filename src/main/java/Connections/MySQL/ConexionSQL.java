@@ -1,4 +1,5 @@
 package Connections.MySQL;
 
-public class eliminar {
+public class ConexionSQL {
+
 }
