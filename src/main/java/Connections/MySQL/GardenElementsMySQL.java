@@ -6,6 +6,8 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +16,7 @@ import java.util.List;
 public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO {
 
     private static final HikariDataSource dataSource;
+    private static Connection connection;
 
     static {
         HikariConfig config = new HikariConfig();
@@ -23,17 +26,34 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         dataSource = new HikariDataSource(config);
     }
 
-    public void connectMySQL(){
-        try (Connection connection = dataSource.getConnection()) {
+    public GardenElementsMySQL(){
+        try {
+            connection = dataSource.getConnection();
             System.out.println("Conectado a la bbdd");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
     }
+    private void disconnectMySQL(){
+        if(connection != null){
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
     @Override
-    public HashMap<Integer, String> showFlowerStore() {
-        return null;
+    public HashMap<Integer, String> showFlowerStore() throws SQLException {
+        HashMap<Integer,String> flowerStores = null;
+        PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM FlowerShops");
+        ResultSet rs = pstmt.executeQuery();
+        while(rs.next()){
+            flowerStores.put(rs.getInt("IdFlowerShop"),rs.getString("Name"));
+        }
+        return flowerStores;
     }
 
     @Override

@@ -2,12 +2,13 @@ package Connections.DAO;
 
 import FlowerStore.Interfaces.GardenElements;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 public interface GenericDAO<T> {
-        HashMap<Integer,String> showFlowerStore();
+        HashMap<Integer,String> showFlowerStore() throws SQLException;
         GardenElements findById(int id);
         List<GardenElements> allGardenElements(int idFlowerStore);
         int createStore(String name);
