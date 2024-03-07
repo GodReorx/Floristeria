@@ -25,11 +25,21 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         config.setPassword(Constants.MYSQL_PASSWORD);
         dataSource = new HikariDataSource(config);
     }
-
-    private static void connectMySQL(){
+    public GardenElementsMySQL(){
         try {
             connection = dataSource.getConnection();
             System.out.println("Conectado a la bbdd");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    private static void connectMySQL(){
+        try {
+            if(connection == null) {
+                connection = dataSource.getConnection();
+                System.out.println("Conectado a la bbdd");
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -47,14 +57,14 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     }
     @Override
     public HashMap<Integer, String> showFlowerStore() throws SQLException {
-        HashMap<Integer,String> flowerStores = null;
+        HashMap<Integer,String> flowerStores = new HashMap<>();
         connectMySQL();
         PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM FlowerShops");
         ResultSet rs = pstmt.executeQuery();
-        disconnectMySQL();
         while(rs.next()){
             flowerStores.put(rs.getInt("IdFlowerShop"),rs.getString("Name"));
         }
+        disconnectMySQL();
         return flowerStores;
     }
 
