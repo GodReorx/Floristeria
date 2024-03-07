@@ -79,7 +79,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
             if (rs.next()) {
 
                 gardenElement = new GardenElements(
-                        rs.getInt("Id"),
+                        rs.getInt("IdGardenElements"),
                         );
             }
         } catch (SQLException e) {
@@ -94,14 +94,14 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     public List<GardenElements> allGardenElements(int idFlowerStore) {
         List<GardenElements> gardenElements = new ArrayList<>();
         connectMySQL();
-        String query = "SELECT * FROM GardenElements WHERE IdFlowerShop = ?";
+        String query = "SELECT * FROM GardenElements";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, idFlowerStore);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                // Creamos objetos GardenElements basados en los datos recuperados de la base de datos
+
                 GardenElements gardenElement = new GardenElementImpl(
-                        rs.getInt("Id"),
+                        rs.getInt("IdGardenElements"),
                         rs.getInt("TypesId"),
                         rs.getString("Features")
 
@@ -143,7 +143,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     @Override
     public void addStock(GardenElements gardenElement, int quantity) {
         connectMySQL();
-        String query = "UPDATE GardenElements SET Stock = Stock + ? WHERE Id = ?";
+        String query = "UPDATE Stock SET Quantity = Quantity + ? WHERE GardenElementsId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, quantity);
             pstmt.setInt(2, gardenElement.getIdProduct());
@@ -157,22 +157,53 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
 
     @Override
     public void updateStock(GardenElements gardenElement, int quantity) {
-        // Update stock para un producto
+        connectMySQL();
+        String query = "UPDATE Stock SET idStock = 1 WHERE GardenElementsId = 1";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, quantity);
+            pstmt.setInt(2, gardenElement.getIdProduct());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disconnectMySQL();
+        }
     }
 
     @Override
     public void deleteStock(GardenElements gardenElement) {
-        // Eliminar el stock completo
+        connectMySQL();
+        String query = "UPDATE Stock SET Quantity = Quantity - ? WHERE GardenElementsId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, gardenElement.getIdProduct());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disconnectMySQL();
+        }
     }
+
 
     @Override
     public HashMap<Integer, Date> allTickets(int idFlowerStore) {
-        //Buscar todos los tickets de la tienda activa
-        return null;
+        HashMap<Integer, Date> tickets = new HashMap<>();
+        connectMySQL();
+        String query = "SELECT IdTicket, Date FROM Ticket WHERE FlowerShopId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, idFlowerStore);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                tickets.put(rs.getInt("IdTicket"), rs.getDate("Date"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disconnectMySQL();
+        }
+        return tickets;
     }
 
     @Override
     public void addTicket(int idFlowerstore, HashMap gardenElementsList) {
-        //Para añadir un ticket nuevo
     }
-}
