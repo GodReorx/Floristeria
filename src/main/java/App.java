@@ -1,15 +1,18 @@
-import FlowerStore.FlowerStoreFactory;
-import FlowerStore.Interfaces.GardenElements;
+import Connections.MySQL.GardenElementsMySQL;
+import FlowerStore.FlowerStore;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class App {
     static Scanner input = new Scanner(System.in);
-    private static FlowerStoreFactory flowerStore;
+    private static GardenElementsMySQL gardenElementsDAO = null;
+
+    private static FlowerStore flowerStore;
     static void runProgram() {
         boolean seguirBucle;
         do {
+
             seguirBucle = menu(pedirDatoInt("Indicate number option:\n"
                     + "0.Exit\n"
                     + "1.Create flowerstore\n"
@@ -54,7 +57,9 @@ public class App {
 
     }
     static void createFlowerStore(){
-        flowerStore = new FlowerStoreFactory(pedirNombre("Indicate the name of flowerStore"));
+        String nameStore = pedirNombre("Indicate the name of flowerStore");
+        int id = gardenElementsDAO.createStore(nameStore);
+        flowerStore = new FlowerStore(nameStore, id);
         //No necesita return, ya modifica el objeto global (edu)
     }
 
