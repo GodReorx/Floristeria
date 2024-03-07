@@ -26,7 +26,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         dataSource = new HikariDataSource(config);
     }
 
-    public GardenElementsMySQL(){
+    private static void connectMySQL(){
         try {
             connection = dataSource.getConnection();
             System.out.println("Conectado a la bbdd");
@@ -35,7 +35,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         }
 
     }
-    private void disconnectMySQL(){
+    private static void disconnectMySQL(){
         if(connection != null){
             try {
                 connection.close();
@@ -48,8 +48,10 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     @Override
     public HashMap<Integer, String> showFlowerStore() throws SQLException {
         HashMap<Integer,String> flowerStores = null;
+        connectMySQL();
         PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM FlowerShops");
         ResultSet rs = pstmt.executeQuery();
+        disconnectMySQL();
         while(rs.next()){
             flowerStores.put(rs.getInt("IdFlowerShop"),rs.getString("Name"));
         }
