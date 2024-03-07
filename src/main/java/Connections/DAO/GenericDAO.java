@@ -1,5 +1,5 @@
 package Connections.DAO;
-import FlowerStore.FlowerStoreFactory;
+
 import FlowerStore.Interfaces.GardenElements;
 
 import java.util.Date;
@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface GenericDAO<T> {
+        HashMap<Integer,String> showFlowerStore();
         GardenElements findById(int id);
         List<GardenElements> allGardenElements(int idFlowerStore);
         int createStore(String name);

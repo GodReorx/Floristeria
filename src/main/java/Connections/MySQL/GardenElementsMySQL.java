@@ -1,12 +1,41 @@
-package Connections.DAO;
+package Connections.MySQL;
 
+import Connections.DAO.GenericDAO;
 import FlowerStore.Interfaces.GardenElements;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class GardenElementsDAO<T extends GardenElements> implements GenericDAO {
+public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO {
+
+    private static final HikariDataSource dataSource;
+
+    static {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://" + Constants.MYSQL_SERVER + "/" + Constants.MYSQL_DATABASE);
+        config.setUsername(Constants.MYSQL_USERNAME);
+        config.setPassword(Constants.MYSQL_PASSWORD);
+        dataSource = new HikariDataSource(config);
+    }
+
+    public void connectMySQL(){
+        try (Connection connection = dataSource.getConnection()) {
+            System.out.println("Conectado a la bbdd");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    @Override
+    public HashMap<Integer, String> showFlowerStore() {
+        return null;
+    }
+
     @Override
     public GardenElements findById(int id) {
         // Implementa la lógica para encontrar un producto por su ID en la base de datos
