@@ -5,18 +5,18 @@ import FlowerStore.Interfaces.GardenElements;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Ticket {
+public class ShopCart {
 
-    private static Ticket instance;
+    private static ShopCart instance;
     private Map<GardenElements, Integer> productos;
 
-    private Ticket() {
+    private ShopCart() {
         this.productos = new HashMap<>();
     }
 
-    public static Ticket getInstance() {
+    public static ShopCart getInstance() {
         if (instance == null) {
-            instance = new Ticket();
+            instance = new ShopCart();
         }
         return instance;
     }
