@@ -72,7 +72,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     public GardenElements findById(int id) {
         GardenElements gardenElement = null;
         connectMySQL();
-        String query = "SELECT * FROM GardenElements WHERE Id = ?";
+        String query = "SELECT * FROM GardenElements WHERE IdGardenElements = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
