@@ -15,6 +15,11 @@ public class Decoration implements GardenElements {
     }
 
     @Override
+    public int getIdProduct() {
+        return idProduct;
+    }
+
+    @Override
     public String getCharacteristics() {
         return typeMaterial;
     }
