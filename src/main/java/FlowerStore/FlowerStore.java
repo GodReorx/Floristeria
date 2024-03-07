@@ -5,10 +5,12 @@ import FlowerStoreFactory.Products.Decoration;
 import FlowerStoreFactory.Products.Flower;
 import FlowerStoreFactory.Products.Tree;
 
-public class FlowerStoreFactory {
+public class FlowerStore {
     private String name;
-    public FlowerStoreFactory(String name){
+    private int id;
+    public FlowerStore(String name, int id){
         this.name = name;
+        this.id = id;
     }
 
     public String getName() {
