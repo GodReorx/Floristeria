@@ -55,7 +55,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         }
 
     }
-    /*
+
     @Override
     public HashMap<Integer, String> showFlowerStore() throws SQLException {
         HashMap<Integer,String> flowerStores = new HashMap<>();
@@ -208,4 +208,4 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     @Override
     public void addTicket(int idFlowerstore, HashMap gardenElementsList) {
     }
-*/
+
