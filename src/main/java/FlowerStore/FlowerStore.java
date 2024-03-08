@@ -17,6 +17,10 @@ public class FlowerStore {
         return name;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -28,12 +32,12 @@ public class FlowerStore {
                 '}';
     }
 
-    public GardenElements getElement(String type, String characteristic, double price) {
+    public GardenElements getElement(String type, String characteristic, double price, int id) {
         GardenElements element = null;
         switch(type.toUpperCase()) {
-            case "FLOWER" -> element = new Flower(characteristic, price);
-            case "DECORATION" -> element = new Decoration(characteristic, price);
-            case "TREES" -> element = new Tree(characteristic, price);
+            case "FLOWER" -> element = new Flower(id, characteristic, price);
+            case "DECORATION" -> element = new Decoration(id, characteristic, price);
+            case "TREES" -> element = new Tree(id, characteristic, price);
             default -> throw new IllegalStateException("Unexpected value");
         }
         return element;
