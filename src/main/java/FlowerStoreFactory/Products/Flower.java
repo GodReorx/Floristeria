@@ -21,6 +21,9 @@ public class Flower implements GardenElements {
         return name;
     }
 
+    public Flower(String characteristic, double price) {
+    }
+
     @Override
     public int getIdProduct() {
         return idProduct;

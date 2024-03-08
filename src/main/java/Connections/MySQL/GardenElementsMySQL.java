@@ -2,13 +2,14 @@ package Connections.MySQL;
 
 import Connections.DAO.GenericDAO;
 import FlowerStore.Interfaces.GardenElements;
+import FlowerStoreFactory.Products.Decoration;
+import FlowerStoreFactory.Products.Flower;
+import FlowerStoreFactory.Products.Tree;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,8 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         config.setPassword(Constants.MYSQL_PASSWORD);
         dataSource = new HikariDataSource(config);
     }
-    public GardenElementsMySQL(){
+
+    public GardenElementsMySQL() {
         try {
             connection = dataSource.getConnection();
             System.out.println("Conectado a la bbdd");
@@ -34,9 +36,10 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         }
 
     }
-    private static void connectMySQL(){
+
+    private static void connectMySQL() {
         try {
-            if(connection == null) {
+            if (connection == null) {
                 connection = dataSource.getConnection();
                 System.out.println("Conectado a la bbdd");
             }
@@ -45,8 +48,9 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         }
 
     }
-    private static void disconnectMySQL(){
-        if(connection != null){
+
+    private static void disconnectMySQL() {
+        if (connection != null) {
             try {
                 connection.close();
             } catch (SQLException e) {
@@ -58,12 +62,12 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
 
     @Override
     public HashMap<Integer, String> showFlowerStore() throws SQLException {
-        HashMap<Integer,String> flowerStores = new HashMap<>();
+        HashMap<Integer, String> flowerStores = new HashMap<>();
         connectMySQL();
         PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM FlowerShops");
         ResultSet rs = pstmt.executeQuery();
-        while(rs.next()){
-            flowerStores.put(rs.getInt("IdFlowerShop"),rs.getString("Name"));
+        while (rs.next()) {
+            flowerStores.put(rs.getInt("IdFlowerShop"), rs.getString("Name"));
         }
         disconnectMySQL();
         return flowerStores;
@@ -78,10 +82,35 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
             pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-
-                gardenElement = new GardenElements(
-                        rs.getInt("IdGardenElements"),
+                String type = rs.getString("TypeName"); // Supongamos que tienes un campo "type" en tu base de datos que indica el tipo de elemento (Flower, Tree, o Decoration)
+                switch (type.toUpperCase()) {
+                    case "FLOWER":
+                        gardenElement = new Flower(
+                                rs.getString("name"),
+                                rs.getInt("idProduct"),
+                                rs.getString("color"),
+                                rs.getDouble("price")
                         );
+                        break;
+                    case "TREE":
+                        gardenElement = new Tree(
+                                rs.getString("name"),
+                                rs.getInt("idProduct"),
+                                rs.getString("size"),
+                                rs.getDouble("price")
+                        );
+                        break;
+                    case "DECORATION":
+                        gardenElement = new Decoration(
+                                rs.getString("name"),
+                                rs.getInt("idProduct"),
+                                rs.getString("typeMaterial"),
+                                rs.getDouble("price")
+                        );
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid type: " + type);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,7 +145,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         }
         return gardenElements;
     }
-    }
+
 
     @Override
     public int createStore(String name) {
@@ -208,4 +237,5 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     @Override
     public void addTicket(int idFlowerstore, HashMap gardenElementsList) {
     }
+}
 

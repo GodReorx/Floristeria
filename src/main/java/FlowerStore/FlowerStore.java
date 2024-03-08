@@ -32,12 +32,12 @@ public class FlowerStore {
                 '}';
     }
 
-    public GardenElements getElement(String type, String characteristic, double price, int id) {
+    public GardenElements getElement(String type, String characteristic, double price, int id, String name) {
         GardenElements element = null;
         switch(type.toUpperCase()) {
-            case "FLOWER" -> element = new Flower(id, characteristic, price);
-            case "DECORATION" -> element = new Decoration(id, characteristic, price);
-            case "TREES" -> element = new Tree(id, characteristic, price);
+            case "FLOWER" -> element = new Flower(name,id, characteristic, price);
+            case "DECORATION" -> element = new Decoration(name,id, characteristic, price);
+            case "TREES" -> element = new Tree(name,id, characteristic, price);
             default -> throw new IllegalStateException("Unexpected value");
         }
         return element;
