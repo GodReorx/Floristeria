@@ -9,10 +9,8 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO {
 
@@ -123,8 +121,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     @Override
     public List<GardenElements> allGardenElements(int idFlowerStore) {
         List<GardenElements> elements = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM GardenElements WHERE IdGardenElements = ?")) {
+        try (PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM GardenElements WHERE IdGardenElements = ?")) {
             pstmt.setInt(1, idFlowerStore);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -146,7 +143,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
                 }
             }
         } catch (SQLException e) {
-            // Handle exception gracefully
+
             e.printStackTrace();
         }
         return elements;
@@ -193,7 +190,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     @Override
     public void updateStock(GardenElements gardenElement, int quantity) {
         connectMySQL();
-        String query = "UPDATE Stock SET idStock = 1 WHERE GardenElementsId = 1";
+        String query = "UPDATE Stock SET idStock = ? WHERE GardenElementsId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, quantity);
             pstmt.setInt(2, gardenElement.getIdProduct());
@@ -224,23 +221,52 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     public HashMap<Integer, Date> allTickets(int idFlowerStore) {
         HashMap<Integer, Date> tickets = new HashMap<>();
         connectMySQL();
-        String query = "SELECT IdTicket, Date FROM Ticket WHERE FlowerShopId = ?";
+        String query = "SELECT * FROM Ticket WHERE FlowerShopId = ?";
+
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+
             pstmt.setInt(1, idFlowerStore);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                tickets.put(rs.getInt("IdTicket"), rs.getDate("Date"));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    tickets.put(rs.getInt("IdTicket"), rs.getDate("Date"));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            disconnectMySQL();
-        }
+        }disconnectMySQL();
+
         return tickets;
     }
 
     @Override
     public void addTicket(int idFlowerstore, HashMap gardenElementsList) {
+        connectMySQL();
+
+        String query = "INSERT INTO Ticket (FlowerShopId, TotalPrice) VALUES (?,?)";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            for (Object gardenElementId : gardenElementsList.keySet()) {
+                pstmt.setInt(1, idFlowerstore);
+                pstmt.setInt(2, (Integer) gardenElementsList.get(gardenElementId));
+                pstmt.addBatch();
+            }
+            pstmt.executeBatch();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }disconnectMySQL();
     }
-}
+
+    }
+
+
 
