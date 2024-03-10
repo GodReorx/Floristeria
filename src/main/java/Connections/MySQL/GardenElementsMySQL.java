@@ -72,7 +72,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         while (rs.next()) {
             flowerStores.put(rs.getInt("IdFlowerShop"), rs.getString("Name"));
         }
-        disconnectMySQL();
+        //disconnectMySQL();
         return flowerStores;
     }
     @Override
@@ -273,13 +273,10 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         disconnectMySQL();
     }
     public void removeFlowerStore(int flowerStoreId) throws SQLException {
-        Connection connection = null;
-        PreparedStatement statement = null;
 
-        try {
-            connection = dataSource.getConnection();
-            String query = "DELETE FROM FlowerStore WHERE id = ?";
-            statement = connection.prepareStatement(query);
+        String query = "DELETE FROM FlowerShops WHERE IdFlowerShop = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)){
             statement.setInt(1, flowerStoreId);
             int rowsAffected = statement.executeUpdate();
 
@@ -290,14 +287,8 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
             }
         } catch (SQLException e) {
             throw new SQLException("Error removing FlowerStore with ID " + flowerStoreId, e);
-        } finally {
-            if (statement != null) {
-                statement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
         }
+
     }
 
     }

@@ -113,7 +113,7 @@ public class App {
         showFlowerStores();
         try {
             gardenElementsMySQL.removeFlowerStore(pedirDatoInt("Qué id quieres borrar?"));
-            System.out.println("FlowerStore with ID " + flowerStoreId + " has been removed.");
+
         } catch (SQLException e) {
             throw new RuntimeException("Error removing FlowerStore", e);
         }
