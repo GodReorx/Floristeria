@@ -93,7 +93,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         } catch (SQLException e) {
             e.getMessage();
         }
-        disconnectMySQL();
+        //disconnectMySQL();
         return newStoreId;
     }
 
@@ -140,7 +140,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            disconnectMySQL();
+            //disconnectMySQL();
         }
         return gardenElement;
     }
@@ -189,7 +189,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            disconnectMySQL();
+            //disconnectMySQL();
         }
     }
 
@@ -204,7 +204,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            disconnectMySQL();
+            //disconnectMySQL();
         }
     }
 
@@ -218,7 +218,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            disconnectMySQL();
+            //disconnectMySQL();
         }
     }
 
@@ -239,7 +239,8 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }disconnectMySQL();
+        }
+        //disconnectMySQL();
 
         return tickets;
     }
@@ -270,7 +271,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
                 e.printStackTrace();
             }
         }
-        disconnectMySQL();
+        //disconnectMySQL();
     }
     public void removeFlowerStore(int flowerStoreId) throws SQLException {
 

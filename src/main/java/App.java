@@ -29,30 +29,18 @@ public class App {
 
     }
     static void runApp(){
-        showFlowerStores();
-        createFlowerStore();
-        /*if(listaFlowerStores.isEmpty()){
+        if (listaFlowerStores.isEmpty()) {
+            System.out.println("You have not created any FlowerStore");
             createFlowerStore();
-        }else{
-            pedirDatoInt("Please indicate the ID of the flower shop you want to work with.");
-        }*/
-    }
-        /*if(listaFlowerStores.isEmpty()){
-            createFlowerStore();
-
-
-        }else{
-            Set<Integer>listaId = listaFlowerStores.keySet();
-            for(Integer id : listaId){
-                String value = listaFlowerStores.get(id);
-                System.out.println("Id: " + id + " Nombre: " + value);
-            }
-            pedirDatoInt("Please indicate the ID of the flower shop you want to work with.");
+        } else {
+            System.out.println("Here are the available flower stores");
+            showFlowerStores();
         }
-
-    }*/
+        flowerStoreId = pedirDatoInt("Please indicate the ID of the flower shop you want to work with:");
+    }
 
     static void runProgram() {
+        System.out.println("Working with FlowerStore ID: " + flowerStoreId);
         boolean seguirBucle;
         do {
 
