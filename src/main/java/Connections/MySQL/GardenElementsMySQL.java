@@ -22,12 +22,13 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         config.setJdbcUrl("jdbc:mysql://" + Constants.MYSQL_SERVER + "/" + Constants.MYSQL_DATABASE);
         config.setUsername(Constants.MYSQL_USERNAME);
         config.setPassword(Constants.MYSQL_PASSWORD);
+        config.setMinimumIdle(10);
         dataSource = new HikariDataSource(config);
     }
 
     public GardenElementsMySQL() {
         try {
-            connection = dataSource.getConnection();
+            this.connection = dataSource.getConnection();
             System.out.println("Conectado a la bbdd");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -51,11 +52,15 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         if (connection != null) {
             try {
                 connection.close();
+                System.out.println("Desconectado de la bbdd");
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }
 
+    }
+    public void close() {
+        disconnectMySQL();
     }
 
     @Override
@@ -70,6 +75,28 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         disconnectMySQL();
         return flowerStores;
     }
+    @Override
+    public int createStore(String name) {
+        int newStoreId = -1;
+        connectMySQL();
+        String query = "INSERT INTO FlowerShops (Name) VALUES (?)";
+        try
+            (PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);){
+            pstmt.setString(1, name);
+            pstmt.executeUpdate();
+            ResultSet generatedKeys = pstmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                newStoreId = generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Failed to get the generated ID for the new store.");
+            }
+        } catch (SQLException e) {
+            e.getMessage();
+        }
+        disconnectMySQL();
+        return newStoreId;
+    }
+
 
     @Override
     public GardenElements findById(int id) {
@@ -149,27 +176,6 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         return elements;
     }
 
-    @Override
-    public int createStore(String name) {
-        int newStoreId = -1;
-        connectMySQL();
-        String query = "INSERT INTO FlowerShops (Name) VALUES (?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, name);
-            pstmt.executeUpdate();
-            ResultSet generatedKeys = pstmt.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                newStoreId = generatedKeys.getInt(1);
-            } else {
-                throw new SQLException("Failed to get the generated ID for the new store.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            disconnectMySQL();
-        }
-        return newStoreId;
-    }
 
 
     @Override
@@ -263,7 +269,35 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }disconnectMySQL();
+        }
+        disconnectMySQL();
+    }
+    public void removeFlowerStore(int flowerStoreId) throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = dataSource.getConnection();
+            String query = "DELETE FROM FlowerStore WHERE id = ?";
+            statement = connection.prepareStatement(query);
+            statement.setInt(1, flowerStoreId);
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected == 0) {
+                System.out.println("No FlowerStore found with ID " + flowerStoreId);
+            } else {
+                System.out.println("FlowerStore with ID " + flowerStoreId + " has been deleted.");
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error removing FlowerStore with ID " + flowerStoreId, e);
+        } finally {
+            if (statement != null) {
+                statement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
     }
 
     }
