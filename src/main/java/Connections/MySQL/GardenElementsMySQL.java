@@ -5,8 +5,7 @@ import FlowerStore.Interfaces.GardenElements;
 import FlowerStoreFactory.Products.Decoration;
 import FlowerStoreFactory.Products.Flower;
 import FlowerStoreFactory.Products.Tree;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+
 
 import java.sql.*;
 import java.util.*;
@@ -119,7 +118,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     public List<GardenElements> allGardenElements(int idFlowerStore) {
         List<GardenElements> elements = new ArrayList<>();
         try {
-            PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM GardenElements WHERE IdGardenElements = ?");
+            PreparedStatement pstmt = connection.prepareStatement("Select * from GardenElements left join Stock on GardenElements.idGardenElements = Stock.GardenElementsId and Stock.FlowerShopId = ?;");
             pstmt.setInt(1, idFlowerStore);
 
             try (ResultSet rs = pstmt.executeQuery()) {
