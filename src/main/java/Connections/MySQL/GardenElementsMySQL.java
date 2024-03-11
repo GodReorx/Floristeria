@@ -5,8 +5,6 @@ import FlowerStore.Interfaces.GardenElements;
 import FlowerStoreFactory.Products.Decoration;
 import FlowerStoreFactory.Products.Flower;
 import FlowerStoreFactory.Products.Tree;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
 import java.util.*;
