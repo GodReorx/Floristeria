@@ -99,9 +99,11 @@ public class App {
         for(GardenElements element : listaElements){
             System.out.println( element);
         }
-       /* String type = pedirNombreSoloLetras("Qué quieres añadir? Flower, tree or decotation?");
-        switch (type.toUpperCase()) {
-        }*/
+        int idProduct = pedirDatoInt("Indica el idProduct que quieres añadir al stock:");
+        int quantity = pedirDatoInt("Ahora añade la cantidad:");
+        gardenElementsMySQL.addStock(flowerStoreId, idProduct,quantity);
+        System.out.println("Se han añadido " + quantity + " productos al stock de la floristería " + flowerStoreId);
+
     }
     static void removeFlowerStore(){
         showFlowerStores();

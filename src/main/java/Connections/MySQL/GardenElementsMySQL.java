@@ -164,13 +164,13 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
 
 
     @Override
-    public void addStock(GardenElements gardenElement, int quantity) {//SOLO ACTUALIZA LA CANTIDAD?
+    public void addStock(int idFlowerStore, int idProduct, int quantity) {//SOLO ACTUALIZA LA CANTIDAD?
         connectMySQL();
         String query = "UPDATE Stock SET Quantity = Quantity + ? WHERE GardenElementsId = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, quantity);
-            pstmt.setInt(2, gardenElement.getIdProduct());
+            pstmt.setInt(2, idProduct);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

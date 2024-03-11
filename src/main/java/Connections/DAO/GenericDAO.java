@@ -12,7 +12,7 @@ public interface GenericDAO<T> {
         GardenElements findById(int id);
         List<GardenElements> allGardenElements(int idFlowerStore);
         int createStore(String name);
-        void addStock(GardenElements gardenElement, int quantity);
+        void addStock(int idFlowerStore, int idProduct, int quantity);
         void updateStock(GardenElements gardenElement, int quantity);
         void deleteStock(GardenElements gardenElement);
         HashMap<Integer, Date> allTickets(int idFlowerStore);
