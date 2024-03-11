@@ -14,20 +14,13 @@ import java.util.Date;
 
 public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO {
 
-    private static final HikariDataSource dataSource;
     private static Connection connection;
+    private static final String  URL = "jdbc:mysql://" + Constants.MYSQL_SERVER + "/" + Constants.MYSQL_DATABASE;
 
-    static {
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://" + Constants.MYSQL_SERVER + "/" + Constants.MYSQL_DATABASE);
-        config.setUsername(Constants.MYSQL_USERNAME);
-        config.setPassword(Constants.MYSQL_PASSWORD);
-        dataSource = new HikariDataSource(config);
-    }
 
     public GardenElementsMySQL() {
         try {
-            connection = dataSource.getConnection();
+            connection = DriverManager.getConnection(URL,Constants.MYSQL_USERNAME,Constants.MYSQL_PASSWORD);
             System.out.println("Conectado a la bbdd");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -38,7 +31,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     private static void connectMySQL() {
         try {
             if (connection == null) {
-                connection = dataSource.getConnection();
+                connection = DriverManager.getConnection(URL,Constants.MYSQL_USERNAME,Constants.MYSQL_PASSWORD);
                 System.out.println("Conectado a la bbdd");
             }
         } catch (SQLException e) {
