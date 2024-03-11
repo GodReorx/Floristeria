@@ -84,7 +84,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
                 switch (type.toUpperCase()) {
                     case "FLOWER":
                         gardenElement = new Flower(
-                                rs.getString("name"),
+                                rs.getInt("quantity"),
                                 rs.getInt("idProduct"),
                                 rs.getString("color"),
                                 rs.getDouble("price")
@@ -92,7 +92,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
                         break;
                     case "TREE":
                         gardenElement = new Tree(
-                                rs.getString("name"),
+                                rs.getInt("quantity"),
                                 rs.getInt("idProduct"),
                                 rs.getString("size"),
                                 rs.getDouble("price")
@@ -100,7 +100,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
                         break;
                     case "DECORATION":
                         gardenElement = new Decoration(
-                                rs.getString("name"),
+                                rs.getInt("quantity"),
                                 rs.getInt("idProduct"),
                                 rs.getString("typeMaterial"),
                                 rs.getDouble("price")
@@ -129,13 +129,13 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
                     String type = rs.getString("TypeName");
                     switch (type.toUpperCase()) {
                         case "FLOWER":
-                            elements.add(new Flower(rs.getString("name"), rs.getInt("idProduct"), rs.getString("color"), rs.getDouble("price")));
+                            elements.add(new Flower(rs.getInt("quantity"), rs.getInt("idProduct"), rs.getString("color"), rs.getDouble("price")));
                             break;
                         case "TREE":
-                            elements.add(new Tree(rs.getString("name"), rs.getInt("idProduct"), rs.getString("size"), rs.getDouble("price")));
+                            elements.add(new Tree(rs.getInt("quantity"), rs.getInt("idProduct"), rs.getString("size"), rs.getDouble("price")));
                             break;
                         case "DECORATION":
-                            elements.add(new Decoration(rs.getString("name"), rs.getInt("idProduct"), rs.getString("typeMaterial"), rs.getDouble("price")));
+                            elements.add(new Decoration(rs.getInt("quantity"), rs.getInt("idProduct"), rs.getString("typeMaterial"), rs.getDouble("price")));
                             break;
                         default:
                             throw new IllegalArgumentException("Invalid type: " + type);
