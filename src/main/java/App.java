@@ -99,10 +99,7 @@ public class App {
     }
     static void insertProduct(){
         String type = pedirNombreSoloLetras("Qué quieres añadir? Flower, tree or decotation?");
-        switch (type.toUpperCase()){
-            case "FLOWER"-> gardenElementsMySQL.addStock(new Flower(pedirNombreSoloLetras("name"),
-                                                                    pedirDatoInt("idProduct"), pedirNombreSoloLetras("color"),
-                                                                 pedirDato("price")),pedirDatoInt("quantity"));
+        switch (type.toUpperCase()) {
         }
     }
     static void removeFlowerStore(){
