@@ -122,19 +122,16 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    String type = rs.getString("TypeName");
-                    switch (type.toUpperCase()) {
-                        case "FLOWER":
-                            elements.add(new Flower(rs.getInt("quantity"), rs.getInt("idProduct"), rs.getString("color"), rs.getDouble("price")));
-                            break;
-                        case "TREE":
-                            elements.add(new Tree(rs.getInt("quantity"), rs.getInt("idProduct"), rs.getString("size"), rs.getDouble("price")));
-                            break;
-                        case "DECORATION":
-                            elements.add(new Decoration(rs.getInt("quantity"), rs.getInt("idProduct"), rs.getString("typeMaterial"), rs.getDouble("price")));
-                            break;
-                        default:
-                            throw new IllegalArgumentException("Invalid type: " + type);
+                    int type = rs.getInt("TypesId");
+                    switch (type) {
+                        case 1 -> elements.add(new Tree(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
+
+
+                        case 2 -> elements.add(new Flower(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
+
+                        case 3 -> elements.add(new Decoration(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
+
+                        default -> throw new IllegalArgumentException("Invalid type: " + type);
                     }
                 }
             }
@@ -167,7 +164,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
 
 
     @Override
-    public void addStock(GardenElements gardenElement, int quantity) {
+    public void addStock(GardenElements gardenElement, int quantity) {//SOLO ACTUALIZA LA CANTIDAD?
         connectMySQL();
         String query = "UPDATE Stock SET Quantity = Quantity + ? WHERE GardenElementsId = ?";
         try {

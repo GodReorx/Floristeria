@@ -46,4 +46,13 @@ public class Flower implements GardenElements {
     public void setPrice(double price) {
          this.price=price;
     }
+
+    @Override
+    public String toString() {
+        return "Flower:" + "\n" +
+                "Quantity:" + quantity + "\n" +
+                "idProduct:" + idProduct + "\n" +
+                "Color:" + color + "\n" +
+                "Price:" + price + "\n";
+    }
 }

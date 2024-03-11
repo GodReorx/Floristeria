@@ -1,11 +1,9 @@
 import Connections.MySQL.GardenElementsMySQL;
 import FlowerStore.FlowerStore;
+import FlowerStore.Interfaces.GardenElements;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class App {
     static Scanner input = new Scanner(System.in);
@@ -95,9 +93,15 @@ public class App {
         //gardenElementsMySQL.close();
     }
     static void insertProduct(){
-        String type = pedirNombreSoloLetras("Qué quieres añadir? Flower, tree or decotation?");
-        switch (type.toUpperCase()) {
+        List<GardenElements> listaElements = new ArrayList<>();
+        listaElements = gardenElementsMySQL.allGardenElements(flowerStoreId);
+        System.out.println("Disponemos de estos productos: ");
+        for(GardenElements element : listaElements){
+            System.out.println( element);
         }
+       /* String type = pedirNombreSoloLetras("Qué quieres añadir? Flower, tree or decotation?");
+        switch (type.toUpperCase()) {
+        }*/
     }
     static void removeFlowerStore(){
         showFlowerStores();

@@ -45,4 +45,13 @@ public class Decoration implements GardenElements {
     public void setPrice(double price) {
         this.price=price;
     }
+
+    @Override
+    public String toString() {
+        return "Decoration:" + "\n" +
+                "Quantity:" + quantity + "\n" +
+                "idProduct:" + idProduct +  "\n" +
+                "TypeMaterial:" + typeMaterial + "\n" +
+                "Price:" + price + "\n";
+    }
 }
