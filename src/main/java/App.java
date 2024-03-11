@@ -1,6 +1,5 @@
 import Connections.MySQL.GardenElementsMySQL;
 import FlowerStore.FlowerStore;
-import FlowerStoreFactory.Products.Flower;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -92,7 +91,12 @@ public class App {
     }
     static void createFlowerStore(){
         String nameStore = pedirNombreSoloLetras("Dime un nombre para la floristeria");
-        int id = gardenElementsMySQL.createStore(nameStore);
+        int id = 0;
+        try {
+            id = gardenElementsMySQL.createStore(nameStore);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         flowerStore = new FlowerStore(nameStore, id);
         System.out.println("FlowerStore " + nameStore + "is created" );
         //gardenElementsMySQL.close();
@@ -113,7 +117,7 @@ public class App {
     }
 
 
-    static double pedirDato(String mensaje) {
+    static double pedirDatoDouble(String mensaje) {
         boolean correcto = true;
         double opcion = 0;
         while (correcto) {
