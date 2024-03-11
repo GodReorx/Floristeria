@@ -15,11 +15,8 @@ public class App {
     private static HashMap<Integer, String> listaFlowerStores = new HashMap<>();
 
     static HashMap<Integer, String> showFlowerStores(){
-        try {
-            listaFlowerStores = gardenElementsMySQL.showFlowerStore();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+        listaFlowerStores = gardenElementsMySQL.showFlowerStore();
         Set<Integer> listaId = listaFlowerStores.keySet();
         System.out.println("Here are the available flower stores");
         for(Integer id : listaId){
@@ -92,11 +89,7 @@ public class App {
     static void createFlowerStore(){
         String nameStore = pedirNombreSoloLetras("Dime un nombre para la floristeria");
         int id = 0;
-        try {
-            id = gardenElementsMySQL.createStore(nameStore);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        id = gardenElementsMySQL.createStore(nameStore);
         flowerStore = new FlowerStore(nameStore, id);
         System.out.println("FlowerStore " + nameStore + "is created" );
         //gardenElementsMySQL.close();

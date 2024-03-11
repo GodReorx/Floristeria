@@ -1,17 +1,15 @@
 package Connections.MongoDB;
 
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.MongoException;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 import javax.swing.text.Document;
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
 
 public class GardenElementsMongoDB {
-    private final MongoCollection<Document> collection;
+    /*private final MongoCollection<Document> collection;
     private MongoClient mongoClient;
     private MongoDatabase database;
     public GardenElementsMongoDB() {
@@ -34,5 +32,5 @@ public class GardenElementsMongoDB {
         if (mongoClient != null) {
             mongoClient.close();
         }
-    }
+    }*/
 }
