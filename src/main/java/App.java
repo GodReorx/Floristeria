@@ -1,5 +1,6 @@
 import Connections.MySQL.GardenElementsMySQL;
 import FlowerStore.FlowerStore;
+import FlowerStoreFactory.Products.Flower;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class App {
             throw new RuntimeException(e);
         }
         Set<Integer> listaId = listaFlowerStores.keySet();
+        System.out.println("Here are the available flower stores");
         for(Integer id : listaId){
             String value = listaFlowerStores.get(id);
             System.out.println("El id: " + id + " Nombre: " + value);
@@ -29,14 +31,15 @@ public class App {
 
     }
     static void runApp(){
+        showFlowerStores();
         if (listaFlowerStores.isEmpty()) {
             System.out.println("You have not created any FlowerStore");
             createFlowerStore();
         } else {
-            System.out.println("Here are the available flower stores");
-            showFlowerStores();
+            flowerStoreId = pedirDatoInt("Please indicate the ID of the flower shop you want to work with:");
+
         }
-        flowerStoreId = pedirDatoInt("Please indicate the ID of the flower shop you want to work with:");
+
     }
 
     static void runProgram() {
@@ -64,7 +67,7 @@ public class App {
                 seguirBucle = false;
                 System.out.println("You have exited the menu");
                 break;
-            case 1:
+            case 1: insertProduct();
                 break;
             case 2: ;
                 break;
@@ -95,7 +98,12 @@ public class App {
         //gardenElementsMySQL.close();
     }
     static void insertProduct(){
-
+        String type = pedirNombreSoloLetras("Qué quieres añadir? Flower, tree or decotation?");
+        switch (type.toUpperCase()){
+            case "FLOWER"-> gardenElementsMySQL.addStock(new Flower(pedirNombreSoloLetras("name"),
+                                                                    pedirDatoInt("idProduct"), pedirNombreSoloLetras("color"),
+                                                                 pedirDato("price")),pedirDatoInt("quantity"));
+        }
     }
     static void removeFlowerStore(){
         showFlowerStores();
