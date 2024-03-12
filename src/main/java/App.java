@@ -1,4 +1,5 @@
 import Connections.MySQL.GardenElementsMySQL;
+import Exceptions.NotValidOptionException;
 import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
 
@@ -24,18 +25,32 @@ public class App {
         return listaFlowerStores;
 
     }
-    static void runApp(){
+    public static void runApp(){
         showFlowerStores();
         if (listaFlowerStores.isEmpty()) {
             System.out.println("You have not created any FlowerStore");
             createFlowerStore();
         } else {
-            flowerStoreId = pedirDatoInt("Please indicate the ID of the flower shop you want to work with:");
+            boolean validId = false;
+            while (!validId) {
+                try {
+                    flowerStoreId = pedirDatoInt("Please indicate the ID of the flower shop you want to work with:");
+                    // Verificar si el ID de la floristería introducido es válido
+                    if (listaFlowerStores.containsKey(flowerStoreId)) {
+                        validId = true; // El ID de la floristería es válido
+                    } else {
+                        throw new NotValidOptionException("The FlowerStore ID entered is not valid.");
+                    }
+                } catch (NotValidOptionException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
         }
 
     }
 
-    static void runProgram() {
+    public static void runProgram() {
         System.out.println("Working with FlowerStore ID: " + flowerStoreId);
         boolean seguirBucle;
         do {
@@ -50,7 +65,8 @@ public class App {
                     + "6.Create tickets with multiples objects\n"
                     + "7.Show a list of old purchases\n"
                     + "8.View the total money earned from all sales\n"
-                    + "9.Remove FlowerStore\n"));
+                    + "9.Create FlowerStore\n"
+                    + "10.Remove FlowerStore\n"));
         }while(seguirBucle);
     }
     static boolean menu(int opcion) {
@@ -70,18 +86,84 @@ public class App {
                 break;
             case 5:
                 break;
-            case 6:
+            case 6: createTicket();
                 break;
-            case 7:
+            case 7: oldPurchasesList();
                 break;
             case 8:
                 break;
             case 9: removeFlowerStore();
                 break;
-            default:
+            case 10: createFlowerStore();
+                break;
+            default: throw new IllegalArgumentException("Invalid option: " + opcion);
         }
         return seguirBucle;
 
+    }
+    private static void createTicket() {
+        Scanner entrada = new Scanner(System.in);
+
+        GardenElementsMySQL catalogo = new GardenElementsMySQL();
+        boolean floristeriaValida = false;
+        while (!floristeriaValida) {
+            flowerStoreId = pedirDatoInt("Tell me the FlowerShop you want to add the ticket?");
+
+            List<GardenElements> gardenElementsList = catalogo.allGardenElements(flowerStoreId);
+
+            if (gardenElementsList.isEmpty()) {
+                System.out.println("No existe la floristería con el ID: " + flowerStoreId);
+            } else {
+                System.out.println("The garden elements available are: ");
+                for (GardenElements gardenElements : gardenElementsList) {
+                    System.out.println(gardenElements);
+                }
+            }
+        }
+
+
+        List<GardenElements> gardenElementsList = catalogo.allGardenElements(flowerStoreId);
+
+        System.out.println("The garden elements available are: ");
+
+        for (GardenElements gardenElements : gardenElementsList) {
+            System.out.println(gardenElements);
+        }
+        boolean addInformation = true;
+        HashMap<GardenElements, Integer> selectedGardenElements = new HashMap<>();
+        while (addInformation) {
+            int productId = pedirDatoInt("Enter product ID:");
+            int quantity = pedirDatoInt("Enter quantity:");
+
+            for (GardenElements gardenElements : gardenElementsList) {
+                if (gardenElements.getIdProduct() == productId) {
+                    selectedGardenElements.put(gardenElements, quantity);
+                    break;
+                }
+            }
+            System.out.println("Do you want to add more products to the ticket? (yes/no)");
+            String respuesta = entrada.next();
+            addInformation = respuesta.equalsIgnoreCase("yes");
+        }
+        catalogo.addTicket(flowerStoreId, selectedGardenElements);
+        System.out.println("Ticket created successfully.");
+    }
+    private static void oldPurchasesList(){
+        Scanner scanner = new Scanner(System.in);
+        flowerStoreId = pedirDatoInt("Enter the ID of the FlowerShop to view tickets:");
+
+        GardenElementsMySQL catalogo = new GardenElementsMySQL();
+        HashMap<Integer, Date> tickets = catalogo.allTickets(flowerStoreId);
+        //he añadido el if para controlar si meten un id que no existe
+
+        if(tickets.isEmpty()){
+            System.out.println("No existe la floristería con el ID: " + flowerStoreId);
+        }else {
+            System.out.println("Here you have the all tickets:");
+            for (Integer ticketId : tickets.keySet()) {
+                System.out.println("Ticket ID: " + ticketId + ", Date: " + tickets.get(ticketId));
+            }
+        }
     }
     static void createFlowerStore(){
         String nameStore = pedirNombreSoloLetras("Dime un nombre para la floristeria");
