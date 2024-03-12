@@ -7,7 +7,7 @@ import java.util.*;
 
 public class App {
     static Scanner input = new Scanner(System.in);
-    public static GardenElementsMySQL <?> gardenElementsMySQL = new GardenElementsMySQL<>();
+    public static GardenElementsMySQL gardenElementsMySQL = new GardenElementsMySQL();
     private static FlowerStore flowerStore;
     private static int flowerStoreId;
     private static HashMap<Integer, String> listaFlowerStores = new HashMap<>();
@@ -31,7 +31,6 @@ public class App {
             createFlowerStore();
         } else {
             flowerStoreId = pedirDatoInt("Please indicate the ID of the flower shop you want to work with:");
-
         }
 
     }

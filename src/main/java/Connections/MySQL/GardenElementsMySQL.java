@@ -11,7 +11,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
-public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO {
+public class GardenElementsMySQL implements GenericDAO {
 
     private static Connection connection;
     private static final String  URL = "jdbc:mysql://" + Constants.MYSQL_SERVER + "/" + Constants.MYSQL_DATABASE;
@@ -164,7 +164,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     }
 
     @Override
-    public void addStock(int idFlowerStore, ArrayList<GardenElements> products) {
+    public void addStock(int idFlowerStore, List<GardenElements> products) {
         connectMySQL();
         String query = "insert into Stock (FlowerShopId,GardenElementsId,Quantity,Price) VALUES (?,?,?,?)";
         try {
@@ -172,8 +172,8 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
                 PreparedStatement pstmt = connection.prepareStatement(query);
                 pstmt.setInt(1, idFlowerStore);
                 pstmt.setInt(2, prod.getIdProduct());
-                pstmt.setInt(3, 0);
-                pstmt.setInt(4, 0);
+                pstmt.setInt(3, prod.getQuantity());
+                pstmt.setDouble(4, prod.getPrice());
                 pstmt.executeUpdate();
             }
         } catch(SQLException e){

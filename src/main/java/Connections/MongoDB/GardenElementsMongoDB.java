@@ -7,15 +7,13 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class GardenElementsMongoDB<T extends GardenElements> implements GenericDAO {
+public class GardenElementsMongoDB implements GenericDAO {
 
     //private final MongoCollection<Document> collection;
     private static ConnectionString connectionString = new ConnectionString(Constants.MONGO_URL);
@@ -90,7 +88,7 @@ public class GardenElementsMongoDB<T extends GardenElements> implements GenericD
     }
 
     @Override
-    public void addStock(int idFlowerStore, ArrayList<GardenElements> products) {
+    public void addStock(int idFlowerStore, List<GardenElements> products) {
 
     }
 }
