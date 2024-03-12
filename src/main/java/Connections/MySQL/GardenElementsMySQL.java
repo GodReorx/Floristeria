@@ -182,7 +182,7 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public void updateStock(GardenElements gardenElement, int quantity) {
+    public void updateStock(int idProduct, int idFlowerStore, int quantity, double price ) {
         connectMySQL();
         String query = "UPDATE Stock SET Quantity = Quantity + ? WHERE GardenElementsId = ? and FlowerStoreId = ?";
         try {

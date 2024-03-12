@@ -104,8 +104,11 @@ public class App {
         }
         int idProduct = pedirDatoInt("Indica el idProduct que quieres añadir al stock:");
         int quantity = pedirDatoInt("Ahora añade la cantidad:");
-        //gardenElementsMySQL.updateStock(idProduct, quantity, price);
+        double price = pedirDatoDouble("Indica el precio al que quieres ponerlo");
+        gardenElementsMySQL.updateStock(idProduct, flowerStoreId,quantity, price);
         System.out.println("Se han añadido " + quantity + " productos al stock de la floristería " + flowerStoreId);
+    }
+    public static void removeProduct(){
 
     }
     static void removeFlowerStore(){
