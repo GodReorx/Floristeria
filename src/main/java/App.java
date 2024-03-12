@@ -78,7 +78,7 @@ public class App {
                 break;
             case 1: insertProduct();
                 break;
-            case 2: ;
+            case 2: ; removeProduct();
                 break;
             case 3: ;
                 break;
@@ -176,13 +176,11 @@ public class App {
         //gardenElementsMySQL.close();
     }
     static void insertProduct(){
-        int num = 1;
         List<GardenElements> listaElements = new ArrayList<>();
         listaElements = gardenElementsMySQL.allGardenElements(flowerStoreId);
         System.out.println("Disponemos de estos productos: ");
         for(GardenElements element : listaElements){
             System.out.println(element);
-            ;
         }
         int idProduct = pedirDatoInt("Indica el idProduct que quieres añadir al stock:");
         int quantity = pedirDatoInt("Ahora añade la cantidad:");
@@ -198,6 +196,16 @@ public class App {
 
     }
     public static void removeProduct(){
+        List<GardenElements> listaElements = new ArrayList<>();
+        listaElements = gardenElementsMySQL.allGardenElements(flowerStoreId);
+        System.out.println("Dispones de estos productos: ");
+        for(GardenElements element : listaElements){
+            System.out.println(element);
+        }
+        int idProduct = pedirDatoInt("Indica el idProduct que quieres borrar del stock:");
+        int quantity = pedirDatoInt("Ahora añade la cantidad:");
+        gardenElementsMySQL.deleteStock(flowerStoreId, idProduct, quantity);
+        System.out.println("Se han borrado " + quantity + " productos al stock de la floristeria " + flowerStoreId);
 
     }
     static void removeFlowerStore(){

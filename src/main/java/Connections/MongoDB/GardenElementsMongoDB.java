@@ -119,12 +119,12 @@ public class GardenElementsMongoDB implements GenericDAO {
     }
 
     @Override
-    public void updateStock(GardenElements gardenElement, int quantity) {
+    public void updateStock(int idProduct, int idFlowerStore, int quantity, double price) {
 
     }
 
     @Override
-    public void deleteStock(GardenElements gardenElement) {
+    public void deleteStock(int idFlowerStore, int idProduct, int quantity) {
 
     }
 

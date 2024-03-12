@@ -15,7 +15,7 @@ public interface GenericDAO {
         int createStore(String name);
         void addStock(int idFlowerStore, List<GardenElements> products);
         void updateStock(int idProduct, int idFlowerStore, int quantity, double price);
-        void deleteStock(GardenElements gardenElement);
+        void deleteStock(int idFlowerStore, int idProduct, int quantity);
         HashMap<Integer, Date> allTickets(int idFlowerStore);
         void addTicket(int idFlowerstore, HashMap<Integer,Integer> gardenElementsList);
 }
