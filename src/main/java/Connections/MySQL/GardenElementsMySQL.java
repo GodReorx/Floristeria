@@ -269,10 +269,29 @@ public class GardenElementsMySQL implements GenericDAO {
         } catch (SQLException e) {
             throw new SQLException("Error removing FlowerStore with ID " + flowerStoreId, e);
         }
-
     }
+    public double TotalPrice(){
+        double totalMoneyEarned=0;
+        try {
+            String query = "SELECT SUM(TotalPrice) AS TotalMoneyEarned FROM Ticket";
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        totalMoneyEarned = rs.getDouble("TotalMoneyEarned");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disconnectMySQL(); // Desconectarse de la base de datos
+        }
 
+        return totalMoneyEarned;
+    }
 }
+
+
 
 
 
