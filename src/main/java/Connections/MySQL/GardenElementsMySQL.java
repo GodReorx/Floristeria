@@ -187,8 +187,10 @@ public class GardenElementsMySQL implements GenericDAO {
         String query = "UPDATE Stock SET Quantity = Quantity + ? WHERE GardenElementsId = ? and FlowerStoreId = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, quantity);
-            pstmt.setInt(2, gardenElement.getIdProduct());
+            pstmt.setInt(1, idProduct);
+            pstmt.setInt(2, idFlowerStore);
+            pstmt.setInt(3, quantity);
+            pstmt.setDouble(4, price);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
