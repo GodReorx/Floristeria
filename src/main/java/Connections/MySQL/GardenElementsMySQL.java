@@ -1,5 +1,6 @@
 package Connections.MySQL;
 
+import Connections.DAO.Constants;
 import Connections.DAO.GenericDAO;
 import FlowerStore.Interfaces.GardenElements;
 import FlowerStoreFactory.Products.Decoration;
@@ -162,17 +163,20 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
         return newStoreId;
     }
 
-
     @Override
-    public void addStock(int idFlowerStore, int idProduct, int quantity) {//SOLO ACTUALIZA LA CANTIDAD?
+    public void addStock(int idFlowerStore, ArrayList<GardenElements> products) {
         connectMySQL();
-        String query = "UPDATE Stock SET Quantity = Quantity + ? WHERE GardenElementsId = ?";
+        String query = "insert into Stock (FlowerShopId,GardenElementsId,Quantity,Price) VALUES (?,?,?,?)";
         try {
-            PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, quantity);
-            pstmt.setInt(2, idProduct);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
+            for (GardenElements prod : products) {
+                PreparedStatement pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, idFlowerStore);
+                pstmt.setInt(2, prod.getIdProduct());
+                pstmt.setInt(3, 0);
+                pstmt.setInt(4, 0);
+                pstmt.executeUpdate();
+            }
+        } catch(SQLException e){
             e.printStackTrace();
         }
     }
@@ -180,7 +184,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
     @Override
     public void updateStock(GardenElements gardenElement, int quantity) {
         connectMySQL();
-        String query = "UPDATE Stock SET idStock = ? WHERE GardenElementsId = ?";
+        String query = "UPDATE Stock SET Quantity = Quantity + ? WHERE GardenElementsId = ? and FlowerStoreId = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, quantity);
@@ -190,6 +194,7 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
             e.printStackTrace();
         }
     }
+
 
     @Override
     public void deleteStock(GardenElements gardenElement) {

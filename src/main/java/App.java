@@ -89,19 +89,23 @@ public class App {
         int id = 0;
         id = gardenElementsMySQL.createStore(nameStore);
         flowerStore = new FlowerStore(nameStore, id);
+        List<GardenElements> products = gardenElementsMySQL.allGardenElements(id);
+        gardenElementsMySQL.addStock(id, products);
         System.out.println("FlowerStore " + nameStore + "is created" );
         //gardenElementsMySQL.close();
     }
     static void insertProduct(){
+        int num = 1;
         List<GardenElements> listaElements = new ArrayList<>();
         listaElements = gardenElementsMySQL.allGardenElements(flowerStoreId);
         System.out.println("Disponemos de estos productos: ");
         for(GardenElements element : listaElements){
-            System.out.println( element);
+            System.out.println(element);
+          ;
         }
         int idProduct = pedirDatoInt("Indica el idProduct que quieres añadir al stock:");
         int quantity = pedirDatoInt("Ahora añade la cantidad:");
-        gardenElementsMySQL.addStock(flowerStoreId, idProduct,quantity);
+        //gardenElementsMySQL.updateStock(idProduct, quantity, price);
         System.out.println("Se han añadido " + quantity + " productos al stock de la floristería " + flowerStoreId);
 
     }
