@@ -48,7 +48,7 @@ public class Decoration implements GardenElements {
 
     @Override
     public String toString() {
-        return "Decoration:" + "\n" +
+        return "Decoration:" + "->" +
                 " Quantity: " + quantity +
                 " idProduct: " + idProduct +
                 " TypeMaterial: " + typeMaterial +

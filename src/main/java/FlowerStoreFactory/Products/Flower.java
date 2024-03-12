@@ -49,7 +49,7 @@ public class Flower implements GardenElements {
 
     @Override
     public String toString() {
-        return "Flower:" + "\n" +
+        return "Flower:" + "->" +
                 " Quantity: " + quantity  +
                 " idProduct: " + idProduct +
                 " Color: " + color +

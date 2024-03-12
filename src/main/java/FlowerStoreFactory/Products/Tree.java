@@ -49,7 +49,7 @@ public class Tree implements GardenElements {
 
     @Override
     public String toString() {
-        return "Tree:" + "\n" +
+        return "Tree:" + "->" +
                 " Quantity: " + quantity  +
                 " idProduct: " + idProduct  +
                 " Size: " + size +
