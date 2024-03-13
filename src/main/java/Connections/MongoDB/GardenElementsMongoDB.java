@@ -2,6 +2,7 @@ package Connections.MongoDB;
 
 import Connections.DAO.Constants;
 import Connections.DAO.GenericDAO;
+import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoException;
@@ -13,7 +14,6 @@ import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -133,7 +133,7 @@ public class GardenElementsMongoDB implements GenericDAO {
     }
 
     @Override
-    public void addTicket(int idFlowerstore, HashMap gardenElementsList) {
+    public void addTicket(FlowerStore idFlowerstore, List<GardenElements> gardenElementsList) {
 
     }
 

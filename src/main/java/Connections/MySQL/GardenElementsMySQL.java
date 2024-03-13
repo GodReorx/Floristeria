@@ -2,6 +2,7 @@ package Connections.MySQL;
 
 import Connections.DAO.Constants;
 import Connections.DAO.GenericDAO;
+import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
 import FlowerStoreFactory.Products.Decoration;
 import FlowerStoreFactory.Products.Flower;
@@ -184,12 +185,12 @@ public class GardenElementsMySQL implements GenericDAO {
     @Override
     public void updateStock(int idProduct, int idFlowerStore, int quantity, double price ) {
         connectMySQL();
-        String query = "UPDATE Stock SET Quantity = Quantity + ? WHERE GardenElementsId = ? and FlowerStoreId = ?";
+        String query = "UPDATE Stock SET Quantity = Quantity + ?, Price = ? WHERE GardenElementsId = ? and FlowerStoreId = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, quantity); // Establecer la cantidad
-            pstmt.setDouble(2, price); // Establecer el precio
-            pstmt.setInt(3, idProduct); // Establecer el ID del producto
+            pstmt.setInt(1, quantity);
+            pstmt.setDouble(2, price);
+            pstmt.setInt(3, idProduct);
             pstmt.setInt(4, idFlowerStore);
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -235,14 +236,14 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public void addTicket(int idFlowerstore, HashMap gardenElementsList) {
+    public void addTicket(FlowerStore flowerStore, List<GardenElements> gardenElementsList) {
         connectMySQL();
 
         String query = "INSERT INTO Ticket (FlowerShopId) VALUES (?)";
 
         try {
             PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, idFlowerstore);
+            pstmt.setInt(1, flowerStore.getId());
             pstmt.executeUpdate();
 
             ResultSet generatedKeys = pstmt.getGeneratedKeys();
@@ -253,13 +254,13 @@ public class GardenElementsMySQL implements GenericDAO {
                 throw new SQLException("Failed to get the generated ID for the new ticket.");
             }
 
-            String updateQuery = "UPDATE GardenElements SET TicketId = ? WHERE idGardenElements = ?";
+            String updateQuery = "Insert into TicketGardenElements(TicketID, GardenElementsId, Quantity) values (?,?,?)";
             pstmt = connection.prepareStatement(updateQuery);
 
-            for (Object gardenElementId : gardenElementsList.keySet()) {
-                int quantity = (int) gardenElementsList.get(gardenElementId);
+            for (GardenElements gardenElement : gardenElementsList) {
                 pstmt.setInt(1, ticketId);
-                pstmt.setInt(2, (Integer)gardenElementId);
+                pstmt.setInt(2, gardenElement.getIdProduct());
+                pstmt.setInt(3, gardenElement.getQuantity());
                 pstmt.addBatch();
             }
 

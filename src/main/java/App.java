@@ -77,13 +77,13 @@ public class App {
                 break;
             case 1: insertProduct();
                 break;
-            case 2: ; removeProduct();
+            case 2: removeProduct();
                 break;
-            case 3: ;
+            case 3: printStock();
                 break;
-            case 4:
+            case 4: printQuantity();
                 break;
-            case 5:
+            case 5: valueTotal();
                 break;
             case 6: createTicket();
                 break;
@@ -102,26 +102,7 @@ public class App {
     }
     private static void createTicket() {
         Scanner entrada = new Scanner(System.in);
-
-        GardenElementsMySQL catalogo = new GardenElementsMySQL();
-        boolean floristeriaValida = false;
-        while (!floristeriaValida) {
-            flowerStoreId = pedirDatoInt("Tell me the FlowerShop you want to add the ticket?");
-
-            List<GardenElements> gardenElementsList = catalogo.allGardenElements(flowerStoreId);
-
-            if (gardenElementsList.isEmpty()) {
-                System.out.println("No existe la floristería con el ID: " + flowerStoreId);
-            } else {
-                System.out.println("The garden elements available are: ");
-                for (GardenElements gardenElements : gardenElementsList) {
-
-                }
-            }
-        }
-
-
-        List<GardenElements> gardenElementsList = catalogo.allGardenElements(flowerStoreId);
+        List<GardenElements> gardenElementsList = gardenElementsMySQL .allGardenElements(flowerStoreId);
 
         System.out.println("The garden elements available are: ");
 
@@ -129,14 +110,14 @@ public class App {
             System.out.println(gardenElements);
         }
         boolean addInformation = true;
-        HashMap<GardenElements, Integer> selectedGardenElements = new HashMap<>();
+
         while (addInformation) {
             int productId = pedirDatoInt("Enter product ID:");
             int quantity = pedirDatoInt("Enter quantity:");
 
             for (GardenElements gardenElements : gardenElementsList) {
                 if (gardenElements.getIdProduct() == productId) {
-                    selectedGardenElements.put(gardenElements, quantity);
+                    gardenElements.setQuantity(gardenElements.getQuantity() + quantity);
                     break;
                 }
             }
@@ -144,7 +125,7 @@ public class App {
             String respuesta = entrada.next();
             addInformation = respuesta.equalsIgnoreCase("yes");
         }
-        catalogo.addTicket(flowerStoreId, selectedGardenElements);
+        gardenElementsMySQL .addTicket(flowerStore, gardenElementsList);
         System.out.println("Ticket created successfully.");
     }
     private static void oldPurchasesList(){
@@ -187,6 +168,29 @@ public class App {
         gardenElementsMySQL.updateStock(idProduct, flowerStoreId,quantity, price);
         System.out.println("Se han añadido " + quantity + " productos al stock de la floristería " + flowerStoreId);
     }
+    private static void printStock(){
+        List<GardenElements> listaStock = gardenElementsMySQL.allGardenElements(flowerStoreId);
+        for(int i = 0; i < listaStock.size(); i++){
+            System.out.println(listaStock.get(i).getClass().getSimpleName() + ": " + listaStock.get(i).getCharacteristics());
+        }
+    }
+    private static void printQuantity(){
+        List<GardenElements> listaStock = gardenElementsMySQL.allGardenElements(flowerStoreId);
+        for(int i = 0; i < listaStock.size(); i++){
+            System.out.println(listaStock.get(i).getClass().getSimpleName() +" " + listaStock.get(i).getCharacteristics()+ ": " + listaStock.get(i).getQuantity());
+        }
+    }
+    private static void valueTotal(){
+        List<GardenElements> listaStock = gardenElementsMySQL.allGardenElements(flowerStoreId);
+        double totalMultiplicacion = 0;
+        double suma = 0;
+        for(int i = 0; i < listaStock.size(); i++){
+            totalMultiplicacion = listaStock.get(i).getPrice() * listaStock.get(i).getQuantity();
+            suma = suma + totalMultiplicacion;
+        }
+        System.out.println("The value total of Flower store with " + flowerStoreId + " is: " + suma);
+    }
+
     private static void totalMoneyEarned(){
         GardenElementsMySQL salesAmount = new GardenElementsMySQL();
         double totalMoneyEarned = salesAmount.TotalPrice();
