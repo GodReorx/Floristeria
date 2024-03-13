@@ -116,7 +116,7 @@ public class App {
             } else {
                 System.out.println("The garden elements available are: ");
                 for (GardenElements gardenElements : gardenElementsList) {
-                    System.out.println(gardenElements);
+
                 }
             }
         }
