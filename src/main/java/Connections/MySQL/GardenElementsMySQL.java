@@ -185,7 +185,7 @@ public class GardenElementsMySQL implements GenericDAO {
     @Override
     public void updateStock(int idProduct, int idFlowerStore, int quantity, double price ) {
         connectMySQL();
-        String query = "UPDATE Stock SET Quantity = Quantity + ?, Price = ? WHERE GardenElementsId = ? and FlowerStoreId = ?";
+        String query = "UPDATE Stock SET Quantity = Quantity + ?, Price = ? WHERE GardenElementsId = ? and FlowerShopId = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, quantity);
@@ -202,12 +202,12 @@ public class GardenElementsMySQL implements GenericDAO {
     @Override
     public void deleteStock(int idFlowerStore, int idProduct, int quantity) {
         connectMySQL();
-        String query = "UPDATE Stock SET Quantity = Quantity - ? WHERE GardenElementsId = ? and FlowerStoreId = ?";
+        String query = "UPDATE Stock SET Quantity = Quantity - ? WHERE GardenElementsId = ? and FlowerShopId = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, quantity);
-            pstmt.setInt(3, idProduct);
-            pstmt.setInt(4, idFlowerStore);
+            pstmt.setInt(2, idProduct);
+            pstmt.setInt(3, idFlowerStore);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
