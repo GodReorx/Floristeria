@@ -238,19 +238,36 @@ public class GardenElementsMySQL implements GenericDAO {
     public void addTicket(int idFlowerstore, HashMap gardenElementsList) {
         connectMySQL();
 
-        String query = "INSERT INTO Ticket (FlowerShopId, TotalPrice) VALUES (?,?)";
+        String query = "INSERT INTO Ticket (FlowerShopId) VALUES (?)";
 
         try {
-            PreparedStatement pstmt = connection.prepareStatement(query);
+            PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setInt(1, idFlowerstore);
+            pstmt.executeUpdate();
+
+            ResultSet generatedKeys = pstmt.getGeneratedKeys();
+            int ticketId = -1;
+            if (generatedKeys.next()) {
+                ticketId = generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Failed to get the generated ID for the new ticket.");
+            }
+
+            String updateQuery = "UPDATE GardenElements SET TicketId = ? WHERE idGardenElements = ?";
+            pstmt = connection.prepareStatement(updateQuery);
+
             for (Object gardenElementId : gardenElementsList.keySet()) {
-                pstmt.setInt(1, idFlowerstore);
-                pstmt.setInt(2, (Integer) gardenElementsList.get(gardenElementId));
+                int quantity = (int) gardenElementsList.get(gardenElementId);
+                pstmt.setInt(1, ticketId);
+                pstmt.setInt(2, (Integer)gardenElementId);
                 pstmt.addBatch();
             }
+
             pstmt.executeBatch();
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
         }
     }
     public void removeFlowerStore(int flowerStoreId) throws SQLException {
