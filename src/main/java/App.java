@@ -132,11 +132,8 @@ public class App {
         System.out.println("Ticket created successfully.");
     }
     private static void oldPurchasesList(){
-        Scanner scanner = new Scanner(System.in);
-        flowerStoreId = pedirDatoInt("Enter the ID of the FlowerShop to view tickets:");
 
-        GardenElementsMySQL catalogo = new GardenElementsMySQL();
-        HashMap<Integer, Date> tickets = catalogo.allTickets(flowerStoreId);
+        HashMap<Integer, Date> tickets = gardenElementsMySQL.allTickets(flowerStoreId);
         //he añadido el if para controlar si meten un id que no existe
 
         if(tickets.isEmpty()){
