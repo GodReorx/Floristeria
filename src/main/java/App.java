@@ -12,20 +12,8 @@ public class App {
     private static int flowerStoreId;
     private static HashMap<Integer, String> listaFlowerStores = new HashMap<>();
 
-    static HashMap<Integer, String> showFlowerStores() {
 
-        listaFlowerStores = gardenElementsMySQL.showFlowerStore();
-        Set<Integer> listaId = listaFlowerStores.keySet();
-        System.out.println("Here are the available flower stores");
-        for (Integer id : listaId) {
-            String value = listaFlowerStores.get(id);
-            System.out.println("El id: " + id + " Nombre: " + value);
-        }
-        return listaFlowerStores;
-
-    }
-
-    static void runApp() {
+    public static void runApp() {
         showFlowerStores();
         if (listaFlowerStores.isEmpty()) {
             System.out.println("You have not created any FlowerStore");
@@ -36,7 +24,7 @@ public class App {
 
     }
 
-    static void runProgram() {
+    public static void runProgram() {
         System.out.println("Working with FlowerStore ID: " + flowerStoreId);
         boolean seguirBucle;
         do {
@@ -55,7 +43,7 @@ public class App {
         } while (seguirBucle);
     }
 
-    static boolean menu(int opcion) {
+    private static boolean menu(int opcion) {
         boolean seguirBucle = true;
         switch (opcion) {
             case 0:
@@ -93,7 +81,7 @@ public class App {
 
     }
 
-    static void createFlowerStore() {
+    private static void createFlowerStore() {
         String nameStore = pedirNombreSoloLetras("Dime un nombre para la floristeria");
         int id = 0;
         id = gardenElementsMySQL.createStore(nameStore);
@@ -104,7 +92,7 @@ public class App {
         //gardenElementsMySQL.close();
     }
 
-    static void insertProduct() {
+    private static void insertProduct() {
         int num = 1;
         List<GardenElements> listaElements = new ArrayList<>();
         listaElements = gardenElementsMySQL.allGardenElements(flowerStoreId);
@@ -120,18 +108,27 @@ public class App {
 
     }
 
-    static void removeFlowerStore() {
-        showFlowerStores();
-        try {
-            gardenElementsMySQL.removeFlowerStore(pedirDatoInt("Qué id quieres borrar?"));
+    private static HashMap<Integer, String> showFlowerStores() {
 
-        } catch (SQLException e) {
-            throw new RuntimeException("Error removing FlowerStore", e);
+        listaFlowerStores = gardenElementsMySQL.showFlowerStore();
+        Set<Integer> listaId = listaFlowerStores.keySet();
+        System.out.println("Here are the available flower stores");
+        for (Integer id : listaId) {
+            String value = listaFlowerStores.get(id);
+            System.out.println("El id: " + id + " Nombre: " + value);
         }
+        return listaFlowerStores;
+
     }
 
 
-    static double pedirDatoDouble(String mensaje) {
+    private static void removeFlowerStore() {
+        showFlowerStores();
+        gardenElementsMySQL.removeFlowerStore(pedirDatoInt("Qué id quieres borrar?"));
+    }
+
+
+    private static double pedirDatoDouble(String mensaje) {
         boolean correcto = true;
         double opcion = 0;
         while (correcto) {
@@ -149,7 +146,7 @@ public class App {
         return opcion;
     }
 
-    static int pedirDatoInt(String mensaje) {
+    private static int pedirDatoInt(String mensaje) {
         boolean correcto = true;
         int opcion = 0;
         while (correcto) {
@@ -167,7 +164,7 @@ public class App {
         return opcion;
     }
 
-    static String pedirNombreSoloLetras(String mensaje) {
+    private static String pedirNombreSoloLetras(String mensaje) {
         boolean seguirBucle = true;
         String nombre = "";
         while (seguirBucle) {
@@ -188,7 +185,7 @@ public class App {
         return nombre;
     }
 
-    static String pedirNombre(String mensaje) {
+    private static String pedirNombre(String mensaje) {
         Scanner input = new Scanner(System.in);
         System.out.println(mensaje);
         String nombre = input.nextLine();
