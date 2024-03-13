@@ -37,6 +37,7 @@ public class App {
                     // Verificar si el ID de la floristería introducido es válido
                     if (listaFlowerStores.containsKey(flowerStoreId)) {
                         validId = true; // El ID de la floristería es válido
+                        flowerStore = new FlowerStore(listaFlowerStores.get(flowerStoreId), flowerStoreId);
                     } else {
                         throw new NotValidOptionException("The FlowerStore ID entered is not valid.");
                     }
@@ -44,6 +45,7 @@ public class App {
                     System.out.println(e.getMessage());
                 }
             }
+
 
         }
 
@@ -102,6 +104,7 @@ public class App {
     }
     private static void createTicket() {
         Scanner entrada = new Scanner(System.in);
+        flowerStore = new FlowerStore(flowerStore.getName(), flowerStoreId);
         List<GardenElements> gardenElementsList = gardenElementsMySQL .allGardenElements(flowerStoreId);
 
         System.out.println("The garden elements available are: ");
