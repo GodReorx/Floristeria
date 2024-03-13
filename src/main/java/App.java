@@ -14,7 +14,6 @@ public class App {
     private static HashMap<Integer, String> listaFlowerStores = new HashMap<>();
 
     static HashMap<Integer, String> showFlowerStores(){
-
         listaFlowerStores = gardenElementsMySQL.showFlowerStore();
         Set<Integer> listaId = listaFlowerStores.keySet();
         System.out.println("Here are the available flower stores");

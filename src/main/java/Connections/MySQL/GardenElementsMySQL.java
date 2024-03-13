@@ -213,7 +213,6 @@ public class GardenElementsMySQL implements GenericDAO {
         }
     }
 
-
     @Override
     public HashMap<Integer, Date> allTickets(int idFlowerStore) {
         HashMap<Integer, Date> tickets = new HashMap<>();

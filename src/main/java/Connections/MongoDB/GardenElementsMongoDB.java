@@ -122,7 +122,6 @@ public class GardenElementsMongoDB implements GenericDAO {
     public void updateStock(int idProduct, int idFlowerStore, int quantity, double price) {
 
     }
-
     @Override
     public void deleteStock(int idFlowerStore, int idProduct, int quantity) {
 
