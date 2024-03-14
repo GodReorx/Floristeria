@@ -114,11 +114,33 @@ public class GardenElementsMongoDB implements GenericDAO {
 
     @Override
     public void updateStock(String idFlowerStore, GardenElements gardenElements) {
+        MongoCollection<Document> collection = database.getCollection("FlowerShops");
 
+        // Construye la consulta para encontrar el elemento en el stock
+        Document query = new Document("_id", new ObjectId(idFlowerStore))
+                .append("stock.type", gardenElements.getClass().getSimpleName())
+                .append("stock.Features", gardenElements.getCharacteristics());
+
+        // Construye la actualización del stock
+        Document update = new Document("$inc", new Document("stock.$.Quantity", gardenElements.getQuantity()));
+
+        // Ejecuta la actualización
+        collection.updateOne(query, update);
     }
+
+
 
     @Override
     public void deleteStock(String idFlowerStore, GardenElements gardenElements) {
+        MongoCollection<Document> collection = database.getCollection("FlowerShops");
+
+        // Construye la consulta para encontrar el elemento en el stock
+        Document query = new Document("_id", new ObjectId(idFlowerStore))
+                .append("stock.type", gardenElements.getClass().getSimpleName())
+                .append("stock.Features", gardenElements.getCharacteristics());
+
+        // Ejecuta la eliminación del producto del stock
+        collection.updateOne(query, new Document("$pull", new Document("stock", new Document("Features", gardenElements.getCharacteristics()))));
 
     }
 
