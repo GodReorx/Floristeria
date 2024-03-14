@@ -1,3 +1,4 @@
+import Connections.DAO.GenericDAO;
 import Connections.DAO.ManagerDAO;
 import Connections.MySQL.GardenElementsMySQL;
 import Exceptions.NotValidOptionException;
