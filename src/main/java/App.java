@@ -15,29 +15,57 @@ public class App {
 
 
     public static void runApp(){
+        int opc = 0;
+        System.out.println("Here are the available flower stores");
+        System.out.println("0. Create or delete a FlowerStore");
         List<FlowerStore> listFlowerStores = showFlowerStores();
         if (listFlowerStores.isEmpty()) {
             System.out.println("You have not created any FlowerStore");
-            createFlowerStore();
-        } else {
-            boolean validId = false;
-            while (!validId) {
-                try {
-                    int opc = InputControl.requestIntData("Please indicate the ID of the flower shop you want to work with:") - 1;
-                    if(opc >= 0 && opc < listFlowerStores.size()){
-                        flowerStore = new FlowerStore(listFlowerStores.get(opc).getId(),listFlowerStores.get(opc).getName());
-                        runProgram();
-                        validId = true;
-                    } else {
-                        throw new NotValidOptionException("The FlowerStore ID entered is not valid.");
-                    }
-                } catch (NotValidOptionException e) {
-                    System.out.println(e.getMessage());
+        }
+        boolean validId = false;
+        while (!validId) {
+            try {
+                opc = InputControl.requestIntData("Please indicate the ID of the flower shop you want to work with:") - 1;
+                if (opc >= 0 && opc < listFlowerStores.size()) {
+                    flowerStore = new FlowerStore(listFlowerStores.get(opc).getId(), listFlowerStores.get(opc).getName());
+                    runProgram();
+                    validId = true;
+                }else if(opc == -1){
+                    addDeleteFlowerShopMenu();
+                    validId = true;
+                }else {
+                    throw new NotValidOptionException("The FlowerStore ID entered is not valid.");
                 }
+            } catch (NotValidOptionException e) {
+                System.out.println(e.getMessage());
             }
         }
+        if(opc == -1){
+            runApp();
+        }
     }
-
+    private static void addDeleteFlowerShopMenu (){
+        int opc;
+        do {
+            opc = InputControl.requestIntData("Choose an option:\n" +
+                    "0. Return to choose a FlowerStore\n" +
+                    "1. Create a new FlowerStore\n" +
+                    "2. Remove a FlowerStore");
+            switch (opc) {
+                case 0:
+                    System.out.println("Returning to main menu");
+                    break;
+                case 1:
+                    createFlowerStore();
+                    break;
+                case 2:
+                    removeFlowerStore();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid option: " + opc);
+            }
+        }while(opc != 0);
+    }
     private static void runProgram() {
         System.out.println("Working with FlowerStore: " + flowerStore.getName());
         boolean seguirBucle;
@@ -52,9 +80,7 @@ public class App {
                     + "5.Print total value of flowerstore\n"
                     + "6.Create tickets with multiples objects\n"
                     + "7.Show a list of old purchases\n"
-                    + "8.View the total money earned from all sales\n"
-                    + "9.Create FlowerStore\n"
-                    + "10.Remove FlowerStore\n"));
+                    + "8.View the total money earned from all sales\n"));
         }while(seguirBucle);
     }
     private static boolean menu(int opcion) {
@@ -79,10 +105,6 @@ public class App {
             case 7: oldPurchasesList();
                 break;
             case 8: totalMoneyEarned();
-                break;
-            case 9: removeFlowerStore();
-                break;
-            case 10: createFlowerStore();
                 break;
             default: throw new IllegalArgumentException("Invalid option: " + opcion);
         }
@@ -222,8 +244,8 @@ public class App {
     private static void removeFlowerStore(){
         List<FlowerStore> listFlowerStores = showFlowerStores();
         try {
-            int opc = InputControl.requestIntData("Select the florist to delete");
-            if(opc > 0 && opc < listFlowerStores.size()) {
+            int opc = InputControl.requestIntData("Select the florist to delete") - 1;
+            if(opc >= 0 && opc < listFlowerStores.size()) {
                 managerDAO.removeFlowerStore(listFlowerStores.get(opc).getId());
                 System.out.println("Flowershop eliminated.");
                 waitForContinue();
@@ -239,7 +261,6 @@ public class App {
     }
     private static List<FlowerStore> showFlowerStores(){
         List<FlowerStore> listFlowerStores = managerDAO.showFlowerStoreManager();
-        System.out.println("Here are the available flower stores");
         for(int i = 0; i < listFlowerStores.size(); i++){
             System.out.println((i+1) + ". " + listFlowerStores.get(i).getName());
         }

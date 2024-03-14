@@ -282,12 +282,6 @@ public class GardenElementsMySQL implements GenericDAO {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, Integer.parseInt(flowerStoreId));
             int rowsAffected = statement.executeUpdate();
-
-            if (rowsAffected == 0) {
-                System.out.println("No FlowerStore found with ID " + flowerStoreId);
-            } else {
-                System.out.println("FlowerStore with ID " + flowerStoreId + " has been deleted.");
-            }
         } catch (SQLException e) {
             System.out.println("Error removing FlowerStore with ID " + flowerStoreId);
         }
