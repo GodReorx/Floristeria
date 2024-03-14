@@ -8,13 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface GenericDAO {
-        HashMap<Integer,String> showFlowerStore();
+        List<FlowerStore> showFlowerStore();
         GardenElements findById(int id);
-        List<GardenElements> allGardenElements(int idFlowerStore);
-        int createStore(String name);
-        void addStock(int idFlowerStore, List<GardenElements> products);
-        void updateStock(int idProduct, int idFlowerStore, int quantity, double price);
-        void deleteStock(int idFlowerStore, int idProduct, int quantity);
-        HashMap<Integer, Date> allTickets(int idFlowerStore);
+        List<GardenElements> allGardenElements(String idFlowerStore);
+        String createStore(String name);
+        void addStock(String idFlowerStore, List<GardenElements> products);
+        void updateStock(String idFlowerStore, GardenElements gardenElements);
+        void deleteStock(String idFlowerStore, GardenElements gardenElements);
+        HashMap<Integer, Date> allTickets(String idFlowerStore);
         void addTicket(FlowerStore flowerStore, List<GardenElements> gardenElementsList);
+        void removeFlowerStore(String flowerStoreId);
+        double totalPrice(String flowerStoreId);
 }

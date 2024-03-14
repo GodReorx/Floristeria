@@ -4,9 +4,9 @@ import Connections.DAO.Constants;
 import Connections.DAO.GenericDAO;
 import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
-import FlowerStoreFactory.Products.Decoration;
-import FlowerStoreFactory.Products.Flower;
-import FlowerStoreFactory.Products.Tree;
+import FlowerStore.Products.Decoration;
+import FlowerStore.Products.Flower;
+import FlowerStore.Products.Tree;
 
 import java.sql.*;
 import java.util.*;
@@ -15,12 +15,12 @@ import java.util.Date;
 public class GardenElementsMySQL implements GenericDAO {
 
     private static Connection connection;
-    private static final String  URL = "jdbc:mysql://" + Constants.MYSQL_SERVER + "/" + Constants.MYSQL_DATABASE;
+    private static final String URL = "jdbc:mysql://" + Constants.MYSQL_SERVER + "/" + Constants.MYSQL_DATABASE;
 
 
     public GardenElementsMySQL() {
         try {
-            connection = DriverManager.getConnection(URL,Constants.MYSQL_USERNAME,Constants.MYSQL_PASSWORD);
+            connection = DriverManager.getConnection(URL, Constants.MYSQL_USERNAME, Constants.MYSQL_PASSWORD);
             System.out.println("Conectado a la bbdd");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -31,7 +31,7 @@ public class GardenElementsMySQL implements GenericDAO {
     private static void connectMySQL() {
         try {
             if (connection == null) {
-                connection = DriverManager.getConnection(URL,Constants.MYSQL_USERNAME,Constants.MYSQL_PASSWORD);
+                connection = DriverManager.getConnection(URL, Constants.MYSQL_USERNAME, Constants.MYSQL_PASSWORD);
                 System.out.println("Conectado a la bbdd");
             }
         } catch (SQLException e) {
@@ -52,14 +52,14 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public HashMap<Integer, String> showFlowerStore() {
-        HashMap<Integer, String> flowerStores = new HashMap<>();
+    public List<FlowerStore> showFlowerStore() {
+        List<FlowerStore> flowerStores = new ArrayList<>();
         connectMySQL();
-        try{
-            PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM FlowerShops");
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(QueryMySQL.ALLSHOPS_QUERY);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                flowerStores.put(rs.getInt("IdFlowerShop"), rs.getString("Name"));
+                flowerStores.add(new FlowerStore(rs.getString("IdFlowerShop"), rs.getString("Name")));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -71,13 +71,13 @@ public class GardenElementsMySQL implements GenericDAO {
     public GardenElements findById(int id) {
         GardenElements gardenElement = null;
         connectMySQL();
-        String query = "SELECT * FROM GardenElements WHERE IdGardenElements = ?";
+        String query = QueryMySQL.FINDBYID_QUERY;
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                int type = rs.getInt("TypesId"); // Supongamos que tienes un campo "type" en tu base de datos que indica el tipo de elemento (Flower, Tree, o Decoration)
+                int type = rs.getInt("TypesId");
                 switch (type) {
                     case 1:
                         gardenElement = new Tree(
@@ -116,22 +116,25 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public List<GardenElements> allGardenElements(int idFlowerStore) {
+    public List<GardenElements> allGardenElements(String idFlowerStore) {
         List<GardenElements> elements = new ArrayList<>();
         try {
-            PreparedStatement pstmt = connection.prepareStatement("Select * from GardenElements left join Stock on GardenElements.idGardenElements = Stock.GardenElementsId and Stock.FlowerShopId = ?;");
-            pstmt.setInt(1, idFlowerStore);
+            PreparedStatement pstmt = connection.prepareStatement(QueryMySQL.ALLSTOCK_QUERY);
+            pstmt.setInt(1, Integer.parseInt(idFlowerStore));
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     int type = rs.getInt("TypesId");
                     switch (type) {
-                        case 1 -> elements.add(new Tree(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
+                        case 1 ->
+                                elements.add(new Tree(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
 
 
-                        case 2 -> elements.add(new Flower(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
+                        case 2 ->
+                                elements.add(new Flower(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
 
-                        case 3 -> elements.add(new Decoration(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
+                        case 3 ->
+                                elements.add(new Decoration(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
 
                         default -> throw new IllegalArgumentException("Invalid type: " + type);
                     }
@@ -144,17 +147,17 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public int createStore(String name) {
-        int newStoreId = -1;
+    public String createStore(String name) {
+        String newStoreId = "-1";
         connectMySQL();
-        String query = "INSERT INTO FlowerShops (Name) VALUES (?)";
+        String query = QueryMySQL.NEWSHOP_QUERY;
         try {
             PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, name);
             pstmt.executeUpdate();
             ResultSet generatedKeys = pstmt.getGeneratedKeys();
             if (generatedKeys.next()) {
-                newStoreId = generatedKeys.getInt(1);
+                newStoreId = generatedKeys.getString(1);
             } else {
                 throw new SQLException("Failed to get the generated ID for the new store.");
             }
@@ -165,33 +168,33 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public void addStock(int idFlowerStore, List<GardenElements> products) {
+    public void addStock(String idFlowerStore, List<GardenElements> gardenElements) {
         connectMySQL();
-        String query = "insert into Stock (FlowerShopId,GardenElementsId,Quantity,Price) VALUES (?,?,?,?)";
+        String query = QueryMySQL.ADDSTOCK_QUERY;
         try {
-            for (GardenElements prod : products) {
+            for (GardenElements prod : gardenElements) {
                 PreparedStatement pstmt = connection.prepareStatement(query);
-                pstmt.setInt(1, idFlowerStore);
+                pstmt.setInt(1, Integer.parseInt(idFlowerStore));
                 pstmt.setInt(2, prod.getIdProduct());
                 pstmt.setInt(3, prod.getQuantity());
                 pstmt.setDouble(4, prod.getPrice());
                 pstmt.executeUpdate();
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateStock(int idProduct, int idFlowerStore, int quantity, double price ) {
+    public void updateStock(String idFlowerStore, GardenElements gardenElements) {
         connectMySQL();
-        String query = "UPDATE Stock SET Quantity = Quantity + ?, Price = ? WHERE GardenElementsId = ? and FlowerShopId = ?";
+        String query = QueryMySQL.UPDATESTOCK_QUERY;
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, quantity);
-            pstmt.setDouble(2, price);
-            pstmt.setInt(3, idProduct);
-            pstmt.setInt(4, idFlowerStore);
+            pstmt.setInt(1, gardenElements.getQuantity());
+            pstmt.setDouble(2, gardenElements.getPrice());
+            pstmt.setInt(3, gardenElements.getIdProduct());
+            pstmt.setInt(4, Integer.parseInt(idFlowerStore));
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -200,14 +203,14 @@ public class GardenElementsMySQL implements GenericDAO {
 
 
     @Override
-    public void deleteStock(int idFlowerStore, int idProduct, int quantity) {
+    public void deleteStock(String idFlowerStore, GardenElements gardenElements) {
         connectMySQL();
-        String query = "UPDATE Stock SET Quantity = Quantity - ? WHERE GardenElementsId = ? and FlowerShopId = ?";
+        String query = QueryMySQL.REMOVESTOCK_QUERY;
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, quantity);
-            pstmt.setInt(2, idProduct);
-            pstmt.setInt(3, idFlowerStore);
+            pstmt.setInt(1, gardenElements.getQuantity());
+            pstmt.setInt(2, gardenElements.getIdProduct());
+            pstmt.setInt(3, Integer.parseInt(idFlowerStore));
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -215,14 +218,14 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public HashMap<Integer, Date> allTickets(int idFlowerStore) {
+    public HashMap<Integer, Date> allTickets(String idFlowerStore) {
         HashMap<Integer, Date> tickets = new HashMap<>();
         connectMySQL();
-        String query = "SELECT * FROM Ticket WHERE FlowerShopId = ?";
+        String query = QueryMySQL.SHOWALLTICKETS_QUERY;
 
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, idFlowerStore);
+            pstmt.setInt(1, Integer.parseInt(idFlowerStore));
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     tickets.put(rs.getInt("IdTicket"), rs.getDate("Date"));
@@ -239,22 +242,22 @@ public class GardenElementsMySQL implements GenericDAO {
     public void addTicket(FlowerStore flowerStore, List<GardenElements> gardenElementsList) {
         connectMySQL();
 
-        String query = "INSERT INTO Ticket (FlowerShopId) VALUES (?)";
+        String query = QueryMySQL.ADDNEWTICKET_QUERY;
 
         try {
             PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, flowerStore.getId());
+            pstmt.setInt(1, Integer.parseInt(flowerStore.getId()));
             pstmt.executeUpdate();
 
             ResultSet generatedKeys = pstmt.getGeneratedKeys();
-            int ticketId = -1;
+            int ticketId;
             if (generatedKeys.next()) {
                 ticketId = generatedKeys.getInt(1);
             } else {
                 throw new SQLException("Failed to get the generated ID for the new ticket.");
             }
 
-            String updateQuery = "Insert into TicketGardenElements(TicketID, GardenElementsId, Quantity) values (?,?,?)";
+            String updateQuery = QueryMySQL.ADDPRODTOTICKET_QUERY;
             pstmt = connection.prepareStatement(updateQuery);
 
             for (GardenElements gardenElement : gardenElementsList) {
@@ -268,16 +271,16 @@ public class GardenElementsMySQL implements GenericDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
         }
     }
-    public void removeFlowerStore(int flowerStoreId) throws SQLException {
 
-        String query = "DELETE FROM FlowerShops WHERE IdFlowerShop = ?";
+    public void removeFlowerStore(String flowerStoreId) {
+
+        String query = QueryMySQL.REMOVESTORE_QUERY;
 
         try {
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, flowerStoreId);
+            statement.setInt(1, Integer.parseInt(flowerStoreId));
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected == 0) {
@@ -286,27 +289,28 @@ public class GardenElementsMySQL implements GenericDAO {
                 System.out.println("FlowerStore with ID " + flowerStoreId + " has been deleted.");
             }
         } catch (SQLException e) {
-            throw new SQLException("Error removing FlowerStore with ID " + flowerStoreId, e);
+            System.out.println("Error removing FlowerStore with ID " + flowerStoreId);
         }
     }
-    public double TotalPrice(){
-        double totalMoneyEarned=0;
-        try {
-            String query = "SELECT SUM(TotalPrice) AS TotalMoneyEarned FROM Ticket";
-            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        totalMoneyEarned = rs.getDouble("TotalMoneyEarned");
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            disconnectMySQL(); // Desconectarse de la base de datos
-        }
 
-        return totalMoneyEarned;
+    @Override
+    public double totalPrice(String flowerShopId) {
+        double totalMoneyEarned = 0;
+        String query = QueryMySQL.TOTALPRICE_QUERY;
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, Integer.parseInt(flowerShopId));
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    totalMoneyEarned = rs.getDouble("TotalMoneyEarned");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return totalMoneyEarned;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
