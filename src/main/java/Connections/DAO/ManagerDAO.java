@@ -38,9 +38,6 @@ public class ManagerDAO {
     public HashMap<Integer, Date> showAllTicketsManager(String idFlowerStore){
         return genericDAO.allTickets(idFlowerStore);
     }
-    public GardenElements findByIdManager(int id){
-        return genericDAO.findById(id);
-    }
     public void removeFlowerStore(String flowerStoreId){
         genericDAO.removeFlowerStore(flowerStoreId);
     }

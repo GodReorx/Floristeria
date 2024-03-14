@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface GenericDAO {
         List<FlowerStore> showFlowerStore();
-        GardenElements findById(int id);
         List<GardenElements> allGardenElements(String idFlowerStore);
         String createStore(String name);
         void addStock(String idFlowerStore, List<GardenElements> products);

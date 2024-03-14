@@ -68,54 +68,6 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public GardenElements findById(int id) {
-        GardenElements gardenElement = null;
-        connectMySQL();
-        String query = QueryMySQL.FINDBYID_QUERY;
-        try {
-            PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                int type = rs.getInt("TypesId");
-                switch (type) {
-                    case 1:
-                        gardenElement = new Tree(
-                                rs.getInt("quantity"),
-                                rs.getInt("idProduct"),
-                                rs.getString("size"),
-                                rs.getDouble("price")
-                        );
-                        break;
-                    case 2:
-                        gardenElement = new Flower(
-                                rs.getInt("quantity"),
-                                rs.getInt("idProduct"),
-                                rs.getString("color"),
-                                rs.getDouble("price")
-                        );
-                        break;
-                    case 3:
-                        gardenElement = new Decoration(
-                                rs.getInt("quantity"),
-                                rs.getInt("idProduct"),
-                                rs.getString("typeMaterial"),
-                                rs.getDouble("price")
-                        );
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Invalid type: " + type);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        }
-        return gardenElement;
-    }
-
-    @Override
     public List<GardenElements> allGardenElements(String idFlowerStore) {
         List<GardenElements> elements = new ArrayList<>();
         try {

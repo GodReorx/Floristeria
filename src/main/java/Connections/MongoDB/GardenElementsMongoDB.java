@@ -30,7 +30,7 @@ public class GardenElementsMongoDB implements GenericDAO {
             mongoClient = MongoClients.create(connectionString);
             database = mongoClient.getDatabase("flowerStoreBBDD");
         } catch (MongoException e){
-            System.err.println("Error al conectar con la base de datos: " + e.getMessage());
+            System.out.println("Error al conectar con la base de datos: " + e.getMessage());
         }
     }
     private static void connectMongodb(){
@@ -40,7 +40,7 @@ public class GardenElementsMongoDB implements GenericDAO {
                 database = mongoClient.getDatabase("flowerStoreBBDD");
             }
         } catch (MongoException e){
-            System.err.println("Error al conectar con la base de datos: " + e.getMessage());
+            System.out.println("Error al conectar con la base de datos: " + e.getMessage());
         }
     }
     private static void disconnectMongodb(){
@@ -49,17 +49,12 @@ public class GardenElementsMongoDB implements GenericDAO {
                 mongoClient.close();
             }
         } catch (MongoException e){
-            System.err.println("Error al conectar con la base de datos: " + e.getMessage());
+            System.out.println("Error al conectar con la base de datos: " + e.getMessage());
         }
     }
 
     @Override
     public List<FlowerStore> showFlowerStore() {
-        return null;
-    }
-
-    @Override
-    public GardenElements findById(int id) {
         return null;
     }
 
@@ -112,7 +107,7 @@ public class GardenElementsMongoDB implements GenericDAO {
                     .append("stock", stock);
             InsertOneResult result = collection.insertOne(newFlowerShop);
         } catch (MongoException e) {
-            System.err.println("Error al conectar a la base de datos: " + e.getMessage());
+            System.out.println("Error al conectar a la base de datos: " + e.getMessage());
         }
         return newFlowerShop.getString("_id");
     }
