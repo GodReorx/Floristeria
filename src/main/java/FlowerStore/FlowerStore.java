@@ -32,12 +32,12 @@ public class FlowerStore {
                 '}';
     }
     //ToDo: Hay que usar esto para construir nuestros elementos, asi es una fabrica bien hecha
-    public GardenElements getElement(String type, String characteristic, double price, int id, int quantity) {
+    public GardenElements getElement(int type, String characteristic, double price, int id, int quantity) {
         GardenElements element;
-        switch(type.toUpperCase()) {
-            case "FLOWER" -> element = new Flower(quantity,id, characteristic, price);
-            case "DECORATION" -> element = new Decoration(quantity,id, characteristic, price);
-            case "TREES" -> element = new Tree(quantity,id, characteristic, price);
+        switch(type) {
+            case 1 -> element = new Tree(quantity,id, characteristic, price);
+            case 2 -> element = new Flower(quantity,id, characteristic, price);
+            case 3 -> element = new Decoration(quantity,id, characteristic, price);
             default -> throw new IllegalStateException("Unexpected value");
         }
         return element;
