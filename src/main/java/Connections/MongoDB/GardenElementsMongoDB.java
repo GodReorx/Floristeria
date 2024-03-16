@@ -6,10 +6,7 @@ import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoException;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -146,7 +143,19 @@ public class GardenElementsMongoDB implements GenericDAO {
 
     @Override
     public HashMap<Integer, Date> allTickets(String idFlowerStore) {
-        return null;
+        MongoCollection<Document> collection = database.getCollection("Tickets");
+        HashMap<Integer, Date> ticketsMap = new HashMap<>();
+
+        Document query = new Document("FlowerStore", idFlowerStore);
+        FindIterable<Document> tickets = collection.find(query);
+
+        for (Document ticket : tickets) {
+            Integer ticketId = ticket.getInteger("_id");
+            Date ticketDate = ticket.getDate("date");
+            ticketsMap.put(ticketId, ticketDate);
+        }
+
+        return ticketsMap;
     }
 
     @Override
@@ -169,16 +178,51 @@ public class GardenElementsMongoDB implements GenericDAO {
 
     @Override
     public void removeFlowerStore(String flowerStoreId) {
+        MongoCollection<Document> collection = database.getCollection("FlowerShops");
+
+        Document query = new Document("_id", new ObjectId(flowerStoreId));
+
+        collection.deleteOne(query);
 
     }
 
     @Override
     public double totalPrice(String flowerStoreId) {
-        return 0;
+        MongoCollection<Document> collection = database.getCollection("FlowerShops");
+
+        Document query = new Document("_id", new ObjectId(flowerStoreId));
+        Document flowerShop = collection.find(query).first();
+
+        List<Document> stock = (List<Document>) flowerShop.get("stock");
+
+        double totalMoneyEarned = 0;
+        for (Document product : stock) {
+            double price = product.getDouble("Price");
+            int quantity = product.getInteger("Quantity");
+            totalMoneyEarned += price * quantity;
+        }
+
+        return totalMoneyEarned;
     }
 
     @Override
     public void addStock(String idFlowerStore, List<GardenElements> products) {
+        MongoCollection<Document> collection = database.getCollection("Stock");
+
+        try {
+            for (GardenElements prod : products) {
+
+                Document gardenElementDocument = new Document();
+                gardenElementDocument.append("FlowerShopId", idFlowerStore)
+                        .append("GardenElementsId", prod.getIdProduct())
+                        .append("Quantity", prod.getQuantity())
+                        .append("Price", prod.getPrice());
+
+                collection.insertOne(gardenElementDocument);
+            }
+        } catch (MongoException e) {
+            e.printStackTrace();
+        }
 
     }
 }
