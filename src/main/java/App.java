@@ -113,7 +113,7 @@ public class App {
 
     }
     private static void insertProduct(){
-        List<GardenElements> listaElements = managerDAO.showStockManager(flowerStore.getId());
+        List<GardenElements> listaElements = managerDAO.showStockManager(flowerStore);
         System.out.println("We have these products: ");
         for(int i = 0; i < listaElements.size(); i++){
             System.out.println((i+1) + ". " + listaElements.get(i).toString());
@@ -137,7 +137,7 @@ public class App {
         }
     }
     private static void removeProduct(){
-        List<GardenElements> listaElements = managerDAO.showStockManager(flowerStore.getId());
+        List<GardenElements> listaElements = managerDAO.showStockManager(flowerStore);
         System.out.println("We have these products: ");
         for(int i = 0; i < listaElements.size(); i++){
             System.out.println((i+1) + ". " + listaElements.get(i).toString());
@@ -165,21 +165,21 @@ public class App {
         }
     }
     private static void printStock(){
-        List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore.getId());
+        List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore);
         for(int i = 0; i < listaStock.size(); i++){
-            System.out.println(listaStock.get(i).getClass().getSimpleName() + ": " + listaStock.get(i).getCharacteristics());
+            System.out.println(listaStock.get(i).getClass().getSimpleName() + ": " + listaStock.get(i).getFeatures());
         }
         waitForContinue();
     }
     private static void printQuantity(){
-        List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore.getId());
+        List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore);
         for(int i = 0; i < listaStock.size(); i++){
-            System.out.println(listaStock.get(i).getClass().getSimpleName() +" " + listaStock.get(i).getCharacteristics()+ ": " + listaStock.get(i).getQuantity());
+            System.out.println(listaStock.get(i).getClass().getSimpleName() +" " + listaStock.get(i).getFeatures()+ ": " + listaStock.get(i).getQuantity());
         }
         waitForContinue();
     }
     private static void valueTotal(){
-        List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore.getId());
+        List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore);
         double total = 0d;
         for(GardenElements prod : listaStock){
             total += prod.getPrice() * prod.getQuantity();
@@ -190,7 +190,7 @@ public class App {
     private static void createTicket() {
         Scanner entrada = new Scanner(System.in);
         flowerStore = new FlowerStore(flowerStore.getName(), flowerStore.getId());
-        List<GardenElements> gardenElementsList = managerDAO.showStockManager(flowerStore.getId());
+        List<GardenElements> gardenElementsList = managerDAO.showStockManager(flowerStore);
 
         System.out.println("The garden elements available are: ");
 
@@ -240,7 +240,7 @@ public class App {
         String id;
         id = managerDAO.newStoreManager(nameStore);
         flowerStore = new FlowerStore(nameStore, id);
-        List<GardenElements> products = managerDAO.showStockManager(id);
+        List<GardenElements> products = managerDAO.showStockManager(flowerStore);
         managerDAO.addStockManager(id, products);
         System.out.println("FlowerStore " + nameStore + "is created" );
         waitForContinue();

@@ -6,23 +6,18 @@ import FlowerStore.Products.Flower;
 import FlowerStore.Products.Tree;
 
 public class FlowerStore {
-    private String name;
     private String id;
+    private String name;
     public FlowerStore(String id, String name){
         this.id = id;
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public String getId() {
         return id;
     }
-
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -31,16 +26,17 @@ public class FlowerStore {
                 "name='" + name + '\'' +
                 '}';
     }
-    //ToDo: Hay que usar esto para construir nuestros elementos, asi es una fabrica bien hecha
-    public GardenElements getElement(int type, String characteristic, double price, int id, int quantity) {
-        GardenElements element;
-        switch(type) {
-            case 1 -> element = new Tree(quantity,id, characteristic, price);
-            case 2 -> element = new Flower(quantity,id, characteristic, price);
-            case 3 -> element = new Decoration(quantity,id, characteristic, price);
-            default -> throw new IllegalStateException("Unexpected value");
+    public GardenElements createElement(int idProduct, int idType, String nameType, String features, double price, int quantity) {
+
+        if(idType == 1 || nameType.equalsIgnoreCase("tree")){
+            return new Tree(idProduct,idType,nameType,features,price,quantity);
+        } else if (idType == 2 || nameType.equalsIgnoreCase("flower")) {
+            return new Flower(idProduct,idType,nameType,features,price,quantity);
+        } else if (idType == 3 || nameType.equalsIgnoreCase("decoration")) {
+            return new Decoration(idProduct,idType,nameType,features,price,quantity);
+        } else {
+            return null;
         }
-        return element;
     }
 }
 

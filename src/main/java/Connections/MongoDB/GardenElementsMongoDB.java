@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class GardenElementsMongoDB implements GenericDAO {
-
-    //private final MongoCollection<Document> collection;
     private static ConnectionString connectionString = new ConnectionString(Constants.MONGO_URL);
     private static MongoClient mongoClient;
     private static MongoDatabase database;
@@ -56,7 +54,7 @@ public class GardenElementsMongoDB implements GenericDAO {
     }
 
     @Override
-    public List<GardenElements> allGardenElements(String idFlowerStore) {
+    public List<GardenElements> allGardenElements(FlowerStore flowerStore) {
         return null;
     }
 
@@ -115,8 +113,8 @@ public class GardenElementsMongoDB implements GenericDAO {
 
         // Construye la consulta para encontrar el elemento en el stock
         Document query = new Document("_id", new ObjectId(idFlowerStore))
-                .append("stock.type", gardenElements.getClass().getSimpleName())
-                .append("stock.Features", gardenElements.getCharacteristics());
+                .append("stock.type", gardenElements.getNameType())
+                .append("stock.Features", gardenElements.getFeatures());
 
         // Construye la actualización del stock
         Document update = new Document("$inc", new Document("stock.$.Quantity", gardenElements.getQuantity()));
@@ -133,11 +131,11 @@ public class GardenElementsMongoDB implements GenericDAO {
 
         // Construye la consulta para encontrar el elemento en el stock
         Document query = new Document("_id", new ObjectId(idFlowerStore))
-                .append("stock.type", gardenElements.getClass().getSimpleName())
-                .append("stock.Features", gardenElements.getCharacteristics());
+                .append("stock.type", gardenElements.getNameType())
+                .append("stock.Features", gardenElements.getFeatures());
 
         // Ejecuta la eliminación del producto del stock
-        collection.updateOne(query, new Document("$pull", new Document("stock", new Document("Features", gardenElements.getCharacteristics()))));
+        collection.updateOne(query, new Document("$pull", new Document("stock", new Document("Features", gardenElements.getFeatures()))));
 
     }
 
@@ -164,8 +162,8 @@ public class GardenElementsMongoDB implements GenericDAO {
         List<Document> ticketInfoProd = new ArrayList<>();
 
         for(GardenElements product : gardenElementsList){
-            ticketInfoProd.add(new Document("Type",product.getClass().getSimpleName())
-                    .append("Features", product.getCharacteristics())
+            ticketInfoProd.add(new Document("Type",product.getNameType())
+                    .append("Features", product.getFeatures())
                     .append("Quantity", product.getQuantity())
                     .append("Price", product.getPrice()));
         }
