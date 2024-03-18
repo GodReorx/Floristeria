@@ -146,6 +146,7 @@ public class App {
         for(int i = 0; i < listaElements.size(); i++){
             System.out.println((i+1) + ". " + listaElements.get(i).toString());
         }
+
         try {
             int opc = InputControl.requestIntData("Indicate the product you want to remove the stock:") - 1;
             boolean flag = false;
