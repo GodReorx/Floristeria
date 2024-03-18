@@ -17,8 +17,8 @@ public class ManagerDAO {
     public List<FlowerStore> showFlowerStoreManager(){
         return genericDAO.showFlowerStore();
     }
-    public List<GardenElements> showStockManager (String idFlowerStore){
-        return genericDAO.allGardenElements(idFlowerStore);
+    public List<GardenElements> showStockManager (FlowerStore flowerStore){
+        return genericDAO.allGardenElements(flowerStore);
     }
     public String newStoreManager(String name){
         return genericDAO.createStore(name);
