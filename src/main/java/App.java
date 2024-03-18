@@ -1,5 +1,6 @@
 import Connections.DAO.GenericDAO;
 import Connections.DAO.ManagerDAO;
+import Connections.MongoDB.GardenElementsMongoDB;
 import Connections.MySQL.GardenElementsMySQL;
 import Exceptions.NotValidOptionException;
 import Exceptions.InputControl;
@@ -12,7 +13,7 @@ import java.util.*;
 
 
 public class App {
-    public static ManagerDAO managerDAO = new ManagerDAO(new GardenElementsMySQL());
+    public static ManagerDAO managerDAO = new ManagerDAO(new GardenElementsMongoDB());
     private static FlowerStore flowerStore;
     private static ShopCart shopCart = ShopCart.getInstance();
 
@@ -195,19 +196,28 @@ public class App {
     }
     private static void createTicket() {
         Scanner entrada = new Scanner(System.in);
-        flowerStore = new FlowerStore(flowerStore.getName(), flowerStore.getId());
+        //flowerStore = new FlowerStore(flowerStore.getName(), flowerStore.getId());
         List<GardenElements> gardenElementsList = managerDAO.showStockManager(flowerStore);
 
         System.out.println("The garden elements available are: ");
 
-        for (GardenElements gardenElements : gardenElementsList) {
-            System.out.println(gardenElements);
+        for (int i = 0; i < gardenElementsList.size(); i++) {
+            System.out.println((i+1) + ". " + gardenElementsList.get(i));
         }
+
+
         boolean addInformation = true;
 
         while (addInformation) {
-            int productId = InputControl.requestIntData("Enter product ID:");
+            int productId = -1;
+
+            while(productId < 0 || productId >= gardenElementsList.size()){
+                productId = InputControl.requestIntData("Enter product ID:") - 1;
+            }
+
             int quantity = InputControl.requestIntData("Enter quantity:");
+
+            //quantity <= gardenElementsList.get(productId).getQuantity()
 
             for (GardenElements gardenElements : gardenElementsList) {
                 if (gardenElements.getIdProduct() == productId) {
@@ -222,6 +232,7 @@ public class App {
         }
         shopCart.printTicket();
         managerDAO.newTicketManager(flowerStore, gardenElementsList);
+        //managerDAO.deleteStockManager();
         System.out.println("Ticket created successfully.");
         waitForContinue();
     }
