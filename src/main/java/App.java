@@ -70,7 +70,7 @@ public class App {
             }
         }while(opc != 0);
     }
-    private static void runProgram() {
+    public static void runProgram() {
         System.out.println("Working with FlowerStore: " + flowerStore.getName());
         boolean seguirBucle;
         do {
@@ -187,9 +187,11 @@ public class App {
     }
     private static void valueTotal(){
         List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore);
-        double total = 0d;
+        double total = 0;
+
         for(GardenElements prod : listaStock){
             total += prod.getPrice() * prod.getQuantity();
+
         }
         System.out.println("The value total of Flower store " + flowerStore.getName() + " is: " + total);
         waitForContinue();

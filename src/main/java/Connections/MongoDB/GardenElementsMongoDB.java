@@ -62,6 +62,7 @@ public class GardenElementsMongoDB implements GenericDAO {
 //            flowerStores.add(flowerStore);
 
             flowerStores.add(new FlowerStore(doc.getObjectId("_id").toHexString(), doc.getString("name")));
+
         }
 
         return flowerStores;
@@ -192,7 +193,8 @@ public class GardenElementsMongoDB implements GenericDAO {
                 .append("stock.Features", gardenElements.getFeatures());
 
         // Construye la actualización del stock
-        Document update = new Document("$inc", new Document("stock.$.Quantity", gardenElements.getQuantity()));
+        Document update = new Document("$inc", new Document("stock.$.Quantity", gardenElements.getQuantity())
+                                                    .append("stock.$.Price", gardenElements.getPrice()));
 
         // Ejecuta la actualización
         collection.updateOne(query, update);
@@ -213,6 +215,7 @@ public class GardenElementsMongoDB implements GenericDAO {
         collection.updateOne(query, new Document("$pull", new Document("stock", new Document("Features", gardenElements.getFeatures()))));
 
     }
+
 
     @Override
     public HashMap<Integer, Date> allTickets(String idFlowerStore) {
@@ -249,15 +252,28 @@ public class GardenElementsMongoDB implements GenericDAO {
         InsertOneResult result = collection.insertOne(newTicket);
     }
 
-    @Override
-    public void removeFlowerStore(String flowerStoreId) {
+//    @Override
+//    public void removeFlowerStore(String flowerStoreId) {
+//        MongoCollection<Document> collection = database.getCollection("FlowerShops");
+//
+//        Document query = new Document("_id", new ObjectId(flowerStoreId));
+//
+//        collection.deleteOne(query);
+//
+//    }
+@Override
+public void removeFlowerStore(String flowerStoreId) {
+    try {
         MongoCollection<Document> collection = database.getCollection("FlowerShops");
 
-        Document query = new Document("_id", new ObjectId(flowerStoreId));
+        // Eliminar la colección
+        collection.drop();
 
-        collection.deleteOne(query);
-
+        System.out.println("La colección FlowerShops ha sido eliminada exitosamente.");
+    } catch (MongoException e) {
+        System.out.println("Error al eliminar la colección FlowerShops: " + e.getMessage());
     }
+}
 
     @Override
     public double totalPrice(String flowerStoreId) {
