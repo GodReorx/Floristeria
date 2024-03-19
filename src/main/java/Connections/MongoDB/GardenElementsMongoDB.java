@@ -11,10 +11,7 @@ import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class GardenElementsMongoDB implements GenericDAO {
     private static ConnectionString connectionString = new ConnectionString(Constants.MONGO_URL);
@@ -53,20 +50,11 @@ public class GardenElementsMongoDB implements GenericDAO {
         List<FlowerStore> flowerStores = new ArrayList<>();
         MongoCollection<Document> collection = database.getCollection("FlowerShops");
         FindIterable<Document> documents = collection.find();
-
         for (Document doc : documents) {
-//            FlowerStore flowerStore = new FlowerStore(doc.getObjectId("_id").toString(), doc.getString("name"));
-//            flowerStore.setId(doc.getObjectId("_id").toString());
-//            flowerStore.setName(doc.getString("name"));
-//
-//            flowerStores.add(flowerStore);
-
             flowerStores.add(new FlowerStore(doc.getObjectId("_id").toHexString(), doc.getString("name")));
-
         }
-
         return flowerStores;
-        }
+    }
 
     @Override
     public List<GardenElements> allGardenElements(FlowerStore flowerStore) {
@@ -187,17 +175,24 @@ public class GardenElementsMongoDB implements GenericDAO {
     public void updateStock(String idFlowerStore, GardenElements gardenElements) {
         MongoCollection<Document> collection = database.getCollection("FlowerShops");
 
-        // Construye la consulta para encontrar el elemento en el stock
-        Document query = new Document("_id", new ObjectId(idFlowerStore))
-                .append("stock.type", gardenElements.getNameType())
-                .append("stock.Features", gardenElements.getFeatures());
+        Document filter = new Document("_id", new ObjectId(idFlowerStore))
+                .append("stock", new Document("$elemMatch", new Document("type", gardenElements.getNameType())
+                        .append("Features", gardenElements.getFeatures())));
+        Document update = new Document("$set", new Document("stock.$.Quantity", gardenElements.getQuantity())
+                .append("stock.$.Price", gardenElements.getPrice()));
+        collection.updateOne(filter,update);
 
-        // Construye la actualización del stock
-        Document update = new Document("$inc", new Document("stock.$.Quantity", gardenElements.getQuantity())
-                                                    .append("stock.$.Price", gardenElements.getPrice()));
-
-        // Ejecuta la actualización
-        collection.updateOne(query, update);
+//        // Construye la consulta para encontrar el elemento en el stock
+//        Document query = new Document("_id", new ObjectId(idFlowerStore))
+//                .append("stock.type", gardenElements.getNameType())
+//                .append("stock.Features", gardenElements.getFeatures());
+//
+//        // Construye la actualización del stock
+//        Document update = new Document("$inc", new Document("stock.$.Quantity", gardenElements.getQuantity())
+//                                                    .append("stock.$.Price", gardenElements.getPrice()));
+//
+//        // Ejecuta la actualización
+//        collection.updateOne(query, update);
     }
 
 
@@ -296,18 +291,16 @@ public void removeFlowerStore(String flowerStoreId) {
 
     @Override
     public void addStock(String idFlowerStore, List<GardenElements> products) {
-        MongoCollection<Document> collection = database.getCollection("Stock");
-
+        MongoCollection<Document> collection = database.getCollection("FlowerShops");
+        Document filter = new Document("_id", new ObjectId(idFlowerStore));
         try {
             for (GardenElements prod : products) {
-
-                Document gardenElementDocument = new Document();
-                gardenElementDocument.append("FlowerShopId", idFlowerStore)
-                        .append("type", prod.getNameType())
+                Document newProd = new Document("type", prod.getNameType())
+                        .append("Features", prod.getFeatures())
                         .append("Quantity", prod.getQuantity())
                         .append("Price", prod.getPrice());
-
-                collection.insertOne(gardenElementDocument);
+                Document update = new Document("$push", new Document("stock", newProd));
+                collection.updateOne(filter,update);
             }
         } catch (MongoException e) {
             e.printStackTrace();
