@@ -10,6 +10,12 @@ import java.util.List;
 public class ManagerDAO {
     private GenericDAO genericDAO;
 
+    //    Esto para en un futuro, usar las dos conexiones a la ver
+//    private List<GenericDAO> listGenericDAO;
+//    public ManagerDAO(List<GenericDAO> listGenericDAO){
+//        this.listGenericDAO = listGenericDAO;
+//    }
+
     public ManagerDAO(GenericDAO genericDAO){
         this.genericDAO = genericDAO;
     }

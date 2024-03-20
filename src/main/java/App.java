@@ -13,10 +13,15 @@ import java.util.*;
 
 
 public class App {
-    public static ManagerDAO managerDAO = new ManagerDAO(new GardenElementsMongoDB());
+    private static ManagerDAO managerDAO = new ManagerDAO(new GardenElementsMongoDB());
     private static FlowerStore flowerStore;
     private static ShopCart shopCart = ShopCart.getInstance();
 
+//    Esto es para en un futuro, probar a meter los dos a la vez
+//    private static ArrayList<GenericDAO> listGenericDAO = new ArrayList(){{
+//        add(new GardenElementsMySQL());
+//        add(new GardenElementsMongoDB());}};
+//    private static ManagerDAO managerDAOList = new ManagerDAO(listGenericDAO);
 
     public static void runApp(){
         int opc = 0;
