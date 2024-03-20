@@ -1,7 +1,5 @@
-import Connections.DAO.GenericDAO;
 import Connections.DAO.ManagerDAO;
 import Connections.MongoDB.GardenElementsMongoDB;
-import Connections.MySQL.GardenElementsMySQL;
 import Exceptions.NotValidOptionException;
 import Exceptions.InputControl;
 import FlowerStore.FlowerStore;
@@ -75,7 +73,7 @@ public class App {
             }
         }while(opc != 0);
     }
-    public static void runProgram() {
+    private static void runProgram() {
         System.out.println("Working with FlowerStore: " + flowerStore.getName());
         boolean seguirBucle;
         do {
@@ -103,9 +101,9 @@ public class App {
                 break;
             case 2: removeProduct();
                 break;
-            case 3: printStock();
+            case 3: printStock(false);
                 break;
-            case 4: printQuantity();
+            case 4: printStock(true);
                 break;
             case 5: valueTotal();
                 break;
@@ -116,7 +114,7 @@ public class App {
             case 8: totalMoneyEarned();
                 break;
             default:
-                System.out.println("Option no valid!");;
+                System.out.println("Option no valid!");
         }
         return seguirBucle;
 
@@ -136,7 +134,7 @@ public class App {
                     listaElements.get(opc).setPrice(price);
                 }
                 managerDAO.updateStockManager(flowerStore.getId(), listaElements.get(opc));
-                System.out.println("Se han añadido " + listaElements.get(opc).getQuantity() + " productos al stock de la floristería " + flowerStore.getName());
+                System.out.println(listaElements.get(opc).getQuantity() + " " + listaElements.get(opc).getFeatures() + " " + listaElements.get(opc).getNameType() + "have been added to the " + flowerStore.getName());
                 waitForContinue();
 
             } else {
@@ -155,37 +153,31 @@ public class App {
 
         try {
             int opc = InputControl.requestIntData("Indicate the product you want to remove the stock:") - 1;
-            boolean flag = false;
-            int stockRemove = 0;
             if (opc >= 0 && opc < listaElements.size()) {
-                stockRemove = InputControl.requestIntData("Indicates the amount to remove:");
+                int stockRemove = InputControl.requestIntData("Indicates the amount to remove:");
                 if (listaElements.get(opc).getQuantity() >= stockRemove) {
                     listaElements.get(opc).setQuantity(listaElements.get(opc).getQuantity() - stockRemove);
-                    flag = true;
+                    managerDAO.updateStockManager(flowerStore.getId(), listaElements.get(opc));
+                    System.out.println(stockRemove + " products have been deleted from the " + flowerStore.getName() + " florist's stock.");
+                    waitForContinue();
                 } else {
                     throw new NotValidOptionException("You can't delete more quantity than the existing stock");
                 }
             } else {
                 throw new NotValidOptionException("Incorrect option!");
             }
-            managerDAO.updateStockManager(flowerStore.getId(), listaElements.get(opc));
-            System.out.println(stockRemove + " products have been deleted from the " + flowerStore.getName() + " florist's stock.");
-            waitForContinue();
         } catch (NotValidOptionException ex) {
             System.out.println(ex.getMessage());
         }
     }
-    private static void printStock(){
+    private static void printStock(boolean includeQuantity) {
         List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore);
-        for(int i = 0; i < listaStock.size(); i++){
-            System.out.println(listaStock.get(i).getClass().getSimpleName() + ": " + listaStock.get(i).getFeatures());
-        }
-        waitForContinue();
-    }
-    private static void printQuantity(){
-        List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore);
-        for(int i = 0; i < listaStock.size(); i++){
-            System.out.println(listaStock.get(i).getClass().getSimpleName() +" " + listaStock.get(i).getFeatures()+ ": " + listaStock.get(i).getQuantity());
+        for (GardenElements element : listaStock) {
+            System.out.print(element.getClass().getSimpleName() + ": " + element.getFeatures());
+            if (includeQuantity) {
+                System.out.print(" " + element.getQuantity());
+            }
+            System.out.println();
         }
         waitForContinue();
     }
