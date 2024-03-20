@@ -264,7 +264,7 @@ public class App {
         flowerStore = new FlowerStore(id, nameStore);
         List<GardenElements> products = managerDAO.showStockManager(flowerStore);
         managerDAO.addStockManager(id, products);
-        System.out.println("FlowerStore " + nameStore + "is created" );
+        System.out.println("FlowerStore " + nameStore + " is created" );
         waitForContinue();
     }
     private static void removeFlowerStore(){
