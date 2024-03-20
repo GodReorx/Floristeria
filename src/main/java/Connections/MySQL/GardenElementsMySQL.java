@@ -89,7 +89,7 @@ public class GardenElementsMySQL implements GenericDAO {
     public String createStore(String name) {
         String newStoreId = "-1";
         connectMySQL();
-        String query = QueryMySQL.NEWSHOP_QUERY;
+        String query = QueryMySQL.NEWSHOP_INSERT;
         try {
             PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, name);
@@ -109,7 +109,7 @@ public class GardenElementsMySQL implements GenericDAO {
     @Override
     public void addStock(String idFlowerStore, List<GardenElements> gardenElements) {
         connectMySQL();
-        String query = QueryMySQL.ADDSTOCK_QUERY;
+        String query = QueryMySQL.ADDSTOCK_INSERT;
         try {
             for (GardenElements prod : gardenElements) {
                 PreparedStatement pstmt = connection.prepareStatement(query);
@@ -127,7 +127,7 @@ public class GardenElementsMySQL implements GenericDAO {
     @Override
     public void updateStock(String idFlowerStore, GardenElements gardenElements) {
         connectMySQL();
-        String query = QueryMySQL.UPDATESTOCK_QUERY;
+        String query = QueryMySQL.STOCK_UPDATE;
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, gardenElements.getQuantity());
@@ -144,7 +144,7 @@ public class GardenElementsMySQL implements GenericDAO {
     @Override
     public void deleteStock(String idFlowerStore, GardenElements gardenElements) {
         connectMySQL();
-        String query = QueryMySQL.REMOVESTOCK_QUERY;
+        String query = QueryMySQL.STOCK_REMOVE;
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, gardenElements.getQuantity());
@@ -220,7 +220,7 @@ public class GardenElementsMySQL implements GenericDAO {
         try {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, Integer.parseInt(flowerStoreId));
-            int rowsAffected = statement.executeUpdate();
+            statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error removing FlowerStore with ID " + flowerStoreId);
         }
