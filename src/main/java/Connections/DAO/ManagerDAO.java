@@ -8,47 +8,42 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ManagerDAO {
-    private GenericDAO genericDAO;
 
-    //    Esto para en un futuro, usar las dos conexiones a la ver
 //    private List<GenericDAO> listGenericDAO;
 //    public ManagerDAO(List<GenericDAO> listGenericDAO){
 //        this.listGenericDAO = listGenericDAO;
 //    }
-
+    private final GenericDAO GENERICDAO;
     public ManagerDAO(GenericDAO genericDAO){
-        this.genericDAO = genericDAO;
+        this.GENERICDAO = genericDAO;
     }
 
-    public List<FlowerStore> showFlowerStoreManager(){
-        return genericDAO.showFlowerStore();
-    }
-    public List<GardenElements> showStockManager (FlowerStore flowerStore){
-        return genericDAO.allGardenElements(flowerStore);
-    }
-    public String newStoreManager(String name){
-        return genericDAO.createStore(name);
-    }
-    public void addStockManager(String idFlowerStore, List<GardenElements> products){
-        genericDAO.addStock(idFlowerStore, products);
-    }
-    public void updateStockManager(String idFlowerStore, GardenElements gardenElements){
-        genericDAO.updateStock(idFlowerStore, gardenElements);
-    }
-    public void deleteStockManager(String idFlowerStore, GardenElements gardenElements){
-        genericDAO.deleteStock(idFlowerStore, gardenElements);
-    }
-    public void newTicketManager(FlowerStore flowerStore, List<GardenElements> gardenElementsList){
-        genericDAO.addTicket(flowerStore, gardenElementsList);
-    }
-    public HashMap<String, Date> showAllTicketsManager(String idFlowerStore){
-        return genericDAO.allTickets(idFlowerStore);
+    public String createStoreManager(String name){
+        return GENERICDAO.createStore(name);
     }
     public void removeFlowerStore(String flowerStoreId){
-        genericDAO.removeFlowerStore(flowerStoreId);
+        GENERICDAO.removeFlowerStore(flowerStoreId);
+    }
+    public List<FlowerStore> showFlowerStoreManager(){
+        return GENERICDAO.showFlowerStore();
+    }
+    public void addStockManager(String idFlowerStore, List<GardenElements> products){
+        GENERICDAO.addStock(idFlowerStore, products);
+    }
+    public void updateStockManager(String idFlowerStore, GardenElements gardenElements){
+        GENERICDAO.updateStock(idFlowerStore, gardenElements);
+    }
+    public List<GardenElements> showStockManager (FlowerStore flowerStore){
+        return GENERICDAO.showStock(flowerStore);
+    }
+    public void newTicketManager(FlowerStore flowerStore, List<GardenElements> gardenElementsList){
+        GENERICDAO.newTicket(flowerStore, gardenElementsList);
+    }
+    public HashMap<String, Date> showAllTicketsManager(String idFlowerStore){
+        return GENERICDAO.showAllTickets(idFlowerStore);
     }
     public double totalPriceManager(String flowerStoreId) {
-        return genericDAO.totalPrice(flowerStoreId);
+        return GENERICDAO.totalPrice(flowerStoreId);
     }
 
 }

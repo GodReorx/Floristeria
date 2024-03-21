@@ -5,21 +5,21 @@ import Exceptions.InputControl;
 import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
 import Ticket.ShopCart;
-
 import java.util.*;
 
 
 
 public class App {
-    private static ManagerDAO managerDAO = new ManagerDAO(new GardenElementsMongoDB());
     private static FlowerStore flowerStore;
     private static ShopCart shopCart = ShopCart.getInstance();
+    private static final ManagerDAO MANAGER_DAO = new ManagerDAO(new GardenElementsMongoDB());
 
-//    Esto es para en un futuro, probar a meter los dos a la vez
-//    private static ArrayList<GenericDAO> listGenericDAO = new ArrayList(){{
+//    private static final ArrayList<GenericDAO> LIST_GENERIC_DAO = new ArrayList(){{
 //        add(new GardenElementsMySQL());
 //        add(new GardenElementsMongoDB());}};
-//    private static ManagerDAO managerDAOList = new ManagerDAO(listGenericDAO);
+//    private static final ManagerDAO MANAGER_DAO_LIST = new ManagerDAO(LIST_GENERIC_DAO);
+
+
 
     public static void runApp(){
         int opc = 0;
@@ -77,7 +77,6 @@ public class App {
         System.out.println("Working with FlowerStore: " + flowerStore.getName());
         boolean seguirBucle;
         do {
-
             seguirBucle = menu(InputControl.requestIntData("Indicate number option:\n"
                     + "0.Exit\n"
                     + "1.Insert a tree, flower or decoration to stock\n"
@@ -117,14 +116,9 @@ public class App {
                 System.out.println("Option no valid!");
         }
         return seguirBucle;
-
     }
     private static void insertProduct(){
-        List<GardenElements> listaElements = managerDAO.showStockManager(flowerStore);
-        System.out.println("We have these products: ");
-        for(int i = 0; i < listaElements.size(); i++){
-            System.out.println((i+1) + ". " + listaElements.get(i).toString());
-        }
+        List<GardenElements> listaElements = showAllProducts();
         try {
             int opc = InputControl.requestIntData("Indicate the product you want to update the stock:") -1;
             if (opc >= 0 && opc < listaElements.size()) {
@@ -133,7 +127,7 @@ public class App {
                 if (price > 0) {
                     listaElements.get(opc).setPrice(price);
                 }
-                managerDAO.updateStockManager(flowerStore.getId(), listaElements.get(opc));
+                MANAGER_DAO.updateStockManager(flowerStore.getId(), listaElements.get(opc));
                 System.out.println(listaElements.get(opc).getQuantity() + " " + listaElements.get(opc).getFeatures() + " " + listaElements.get(opc).getNameType() + "have been added to the " + flowerStore.getName());
                 waitForContinue();
 
@@ -145,19 +139,14 @@ public class App {
         }
     }
     private static void removeProduct(){
-        List<GardenElements> listaElements = managerDAO.showStockManager(flowerStore);
-        System.out.println("We have these products: ");
-        for(int i = 0; i < listaElements.size(); i++){
-            System.out.println((i+1) + ". " + listaElements.get(i).toString());
-        }
-
+        List<GardenElements> listaElements = showAllProducts();
         try {
             int opc = InputControl.requestIntData("Indicate the product you want to remove the stock:") - 1;
             if (opc >= 0 && opc < listaElements.size()) {
                 int stockRemove = InputControl.requestIntData("Indicates the amount to remove:");
                 if (listaElements.get(opc).getQuantity() >= stockRemove) {
                     listaElements.get(opc).setQuantity(listaElements.get(opc).getQuantity() - stockRemove);
-                    managerDAO.updateStockManager(flowerStore.getId(), listaElements.get(opc));
+                    MANAGER_DAO.updateStockManager(flowerStore.getId(), listaElements.get(opc));
                     System.out.println(stockRemove + " products have been deleted from the " + flowerStore.getName() + " florist's stock.");
                     waitForContinue();
                 } else {
@@ -171,9 +160,9 @@ public class App {
         }
     }
     private static void printStock(boolean includeQuantity) {
-        List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore);
+        List<GardenElements> listaStock = MANAGER_DAO.showStockManager(flowerStore);
         for (GardenElements element : listaStock) {
-            System.out.print(element.getClass().getSimpleName() + ": " + element.getFeatures());
+            System.out.print(element.getNameType() + ": " + element.getFeatures());
             if (includeQuantity) {
                 System.out.print(" " + element.getQuantity());
             }
@@ -182,58 +171,39 @@ public class App {
         waitForContinue();
     }
     private static void valueTotal(){
-        List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore);
-        double total = 0;
-
-        for(GardenElements prod : listaStock){
-            total += prod.getPrice() * prod.getQuantity();
-
-        }
+        List<GardenElements> listaStock = MANAGER_DAO.showStockManager(flowerStore);
+        double total = listaStock.stream().mapToDouble(prod -> prod.getPrice()* prod.getQuantity()).sum();
         System.out.println("The value total of Flower store " + flowerStore.getName() + " is: " + total);
         waitForContinue();
     }
     private static void createTicket() {
         Scanner entrada = new Scanner(System.in);
-        List<GardenElements> gardenElementsList = managerDAO.showStockManager(flowerStore);
-
-        System.out.println("The garden elements available are: ");
-
-        for (int i = 0; i < gardenElementsList.size(); i++) {
-            System.out.println((i+1) + ". " + gardenElementsList.get(i));
-        }
-
-
+        List<GardenElements> gardenElementsList = showAllProducts();
         boolean addInformation = true;
-
         while (addInformation) {
             int productId = -1;
-
             while(productId < 0 || productId >= gardenElementsList.size()){
                 productId = InputControl.requestIntData("Enter product ID:") - 1;
             }
-
             int quantity = InputControl.requestIntData("Enter quantity:");
-
             if(quantity <= gardenElementsList.get(productId).getQuantity()){
                 GardenElements temp = gardenElementsList.get(productId);
                 GardenElements ticketGarden = flowerStore.createElement(temp.getIdProduct(), temp.getIdType(), temp.getNameType(), temp.getFeatures(), temp.getPrice(), temp.getQuantity());
                 shopCart.addProductos(ticketGarden,quantity);
                 gardenElementsList.get(productId).setQuantity(gardenElementsList.get(productId).getQuantity()-quantity);
-                managerDAO.updateStockManager(flowerStore.getId(),gardenElementsList.get(productId));
+                MANAGER_DAO.updateStockManager(flowerStore.getId(),gardenElementsList.get(productId));
                 System.out.println("Do you want to add more products to the ticket? (yes/no)");
-                String respuesta = entrada.next();
-                addInformation = respuesta.equalsIgnoreCase("yes");
+                String answer = entrada.next();
+                addInformation = answer.equalsIgnoreCase("yes");
             }
         }
         shopCart.printTicket();
-        managerDAO.newTicketManager(flowerStore, shopCart.getProducts());
+        MANAGER_DAO.newTicketManager(flowerStore, shopCart.getProducts());
         System.out.println("Ticket created successfully.");
         waitForContinue();
     }
-
     private static void oldPurchasesList(){
-
-        HashMap<String, Date> tickets = managerDAO.showAllTicketsManager(flowerStore.getId());
+        HashMap<String, Date> tickets = MANAGER_DAO.showAllTicketsManager(flowerStore.getId());
         if(tickets.isEmpty()){
             System.out.println("Don't have any ticket created");
         }else {
@@ -245,17 +215,17 @@ public class App {
         waitForContinue();
     }
     private static void totalMoneyEarned(){
-        double totalMoneyEarned = managerDAO.totalPriceManager(flowerStore.getId());
+        double totalMoneyEarned = MANAGER_DAO.totalPriceManager(flowerStore.getId());
         System.out.println("Total Money Earned from all sales: " + totalMoneyEarned);
         waitForContinue();
     }
     private static void createFlowerStore(){
         String nameStore = InputControl.askNameOnlyLetters("FlowerStore name: ");
         String id;
-        id = managerDAO.newStoreManager(nameStore);
+        id = MANAGER_DAO.createStoreManager(nameStore);
         flowerStore = new FlowerStore(id, nameStore);
-        List<GardenElements> products = managerDAO.showStockManager(flowerStore);
-        managerDAO.addStockManager(id, products);
+        List<GardenElements> products = MANAGER_DAO.showStockManager(flowerStore);
+        MANAGER_DAO.addStockManager(id, products);
         System.out.println("FlowerStore " + nameStore + " is created" );
         waitForContinue();
     }
@@ -264,7 +234,7 @@ public class App {
         try {
             int opc = InputControl.requestIntData("Select the florist to delete") - 1;
             if(opc >= 0 && opc < listFlowerStores.size()) {
-                managerDAO.removeFlowerStore(listFlowerStores.get(opc).getId());
+                MANAGER_DAO.removeFlowerStore(listFlowerStores.get(opc).getId());
                 System.out.println("Flowershop eliminated.");
                 waitForContinue();
             } else if (opc == 0){
@@ -278,12 +248,20 @@ public class App {
 
     }
     private static List<FlowerStore> showFlowerStores(){
-        List<FlowerStore> listFlowerStores = managerDAO.showFlowerStoreManager();
+        List<FlowerStore> listFlowerStores = MANAGER_DAO.showFlowerStoreManager();
         for(int i = 0; i < listFlowerStores.size(); i++){
             System.out.println((i+1) + ". " + listFlowerStores.get(i).getName());
         }
         return listFlowerStores;
 
+    }
+    private static List<GardenElements> showAllProducts(){
+        List<GardenElements> listaElements = MANAGER_DAO.showStockManager(flowerStore);
+        System.out.println("We have these products: ");
+        for(int i = 0; i < listaElements.size(); i++){
+            System.out.println((i+1) + ". " + listaElements.get(i).toString());
+        }
+        return listaElements;
     }
     private static void waitForContinue(){
         Scanner sc = new Scanner(System.in);

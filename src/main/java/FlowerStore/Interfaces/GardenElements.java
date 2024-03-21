@@ -1,28 +1,20 @@
 package FlowerStore.Interfaces;
 
 public interface GardenElements {
-   public int getIdProduct();
+   int getIdProduct();
 
-   public int getIdType();
+   int getIdType();
 
-   public String getNameType();
+   String getNameType();
 
-   public String getFeatures();
+   String getFeatures();
 
-   public double getPrice();
+   double getPrice();
 
-   public int getQuantity();
+   int getQuantity();
 
-   public void setIdProduct(int idProduct);
+   void setPrice(double price);
 
-   public void setIdType(int idType);
-
-   public void setNameType(String nameType);
-
-   public void setFeatures(String features);
-
-   public void setPrice(double price);
-
-   public void setQuantity(int quantity);
+   void setQuantity(int quantity);
 
 }

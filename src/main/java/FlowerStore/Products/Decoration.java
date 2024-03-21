@@ -46,22 +46,6 @@ public class Decoration implements GardenElements {
     public int getQuantity() {
         return quantity;
     }
-    @Override
-    public void setIdProduct(int idProduct) {
-        this.idProduct = idProduct;
-    }
-    @Override
-    public void setIdType(int idType) {
-        this.idType = idType;
-    }
-    @Override
-    public void setNameType(String nameType) {
-        this.nameType = nameType;
-    }
-    @Override
-    public void setFeatures(String features) {
-        this.features = features;
-    }
 
     @Override
     public void setPrice(double price) {

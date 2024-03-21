@@ -6,58 +6,57 @@ import java.util.Scanner;
 public class InputControl {
     private static final Scanner INPUT = new Scanner(System.in);
     public static double requestDoubleData(String mensaje) {
-        boolean correcto = true;
-        double opcion = 0;
-        while (correcto) {
+        boolean flag = true;
+        double opt = 0;
+        while (flag) {
             try {
                 System.out.println(mensaje);
-                opcion = INPUT.nextDouble();
-                correcto = false;
+                opt = INPUT.nextDouble();
+                flag = false;
             } catch (InputMismatchException e) {
-                System.out.println("No es un formato válido");
+                System.out.println("ERROR: Incorrect format");
             }
             INPUT.nextLine();
 
         }
 
-        return opcion;
+        return opt;
     }
     public static int requestIntData(String mensaje) {
-        boolean correcto = true;
-        int opcion = 0;
-        while (correcto) {
+        boolean flag = true;
+        int opt = 0;
+        while (flag) {
             try {
                 System.out.println(mensaje);
-                opcion = INPUT.nextInt();
-                correcto = false;
+                opt = INPUT.nextInt();
+                flag = false;
             } catch (InputMismatchException e) {
-                System.out.println("Introduce numeros enteros");
+                System.out.println("ERROR: Only accept numbers");
             }
             INPUT.nextLine();
 
         }
-
-        return opcion;
+        return opt;
     }
 
     public static String askNameOnlyLetters(String mensaje) {
-        boolean seguirBucle = true;
-        String nombre = "";
-        while (seguirBucle) {
+        boolean flag = true;
+        String name = "";
+        while (flag) {
             try {
                 System.out.println(mensaje);
-                nombre = INPUT.nextLine();
-                for(int i = 0; i < nombre.length(); i++) {
-                    char comprobante = nombre.charAt(i);
-                    if (!Character.isAlphabetic(comprobante)) {//Compruebo que cada caracter sean letras
+                name = INPUT.nextLine();
+                for(int i = 0; i < name.length(); i++) {
+                    char checkChar = name.charAt(i);
+                    if (!Character.isAlphabetic(checkChar)) {
                         throw new Exception();
                     }
                 }
-                seguirBucle = false;
+                flag = false;
             } catch (Exception e) {
-                System.out.println("Introduce solo letras");
+                System.out.println("ERROR: Only characters");
             }
         }
-        return nombre;
+        return name;
     }
 }

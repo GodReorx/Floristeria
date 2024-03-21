@@ -5,6 +5,7 @@ import Connections.DAO.GenericDAO;
 import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
 
+import javax.sound.midi.Soundbank;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
@@ -48,44 +49,6 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public List<FlowerStore> showFlowerStore() {
-        List<FlowerStore> flowerStores = new ArrayList<>();
-        connectMySQL();
-        try {
-            PreparedStatement pstmt = connection.prepareStatement(QueryMySQL.ALLSHOPS_QUERY);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                flowerStores.add(new FlowerStore(rs.getString("IdFlowerShop"), rs.getString("Name")));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return flowerStores;
-    }
-
-    @Override
-    public List<GardenElements> allGardenElements(FlowerStore flowerStore) {
-        List<GardenElements> elements = new ArrayList<>();
-        try {
-            PreparedStatement pstmt = connection.prepareStatement(QueryMySQL.ALLSTOCK_QUERY);
-            pstmt.setInt(1, Integer.parseInt(flowerStore.getId()));
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    try{
-                        elements.add(flowerStore.createElement(rs.getInt("IdGardenElements"),rs.getInt("idType"),rs.getString("TypeName"),rs.getString("features"),rs.getDouble("Price"),rs.getInt("Quantity")));
-                    }catch (IllegalArgumentException e){
-                        System.out.println("Error: " + e.getMessage());
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return elements;
-    }
-
-    @Override
     public String createStore(String name) {
         String newStoreId = "-1";
         connectMySQL();
@@ -101,11 +64,37 @@ public class GardenElementsMySQL implements GenericDAO {
                 throw new SQLException("Failed to get the generated ID for the new store.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("ERROR: Can't create new shop on BBDD");
         }
         return newStoreId;
     }
+    public void removeFlowerStore(String flowerStoreId) {
 
+        String query = QueryMySQL.REMOVESTORE_QUERY;
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, Integer.parseInt(flowerStoreId));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error removing FlowerStore with ID " + flowerStoreId);
+        }
+    }
+    @Override
+    public List<FlowerStore> showFlowerStore() {
+        List<FlowerStore> flowerStores = new ArrayList<>();
+        connectMySQL();
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(QueryMySQL.ALLSHOPS_QUERY);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                flowerStores.add(new FlowerStore(rs.getString("IdFlowerShop"), rs.getString("Name")));
+            }
+        } catch (SQLException e) {
+            System.out.println("ERROR: Can't show all florist");
+        }
+        return flowerStores;
+    }
     @Override
     public void addStock(String idFlowerStore, List<GardenElements> gardenElements) {
         connectMySQL();
@@ -120,7 +109,7 @@ public class GardenElementsMySQL implements GenericDAO {
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("ERROR: Can't add new stock for florist");
         }
     }
 
@@ -136,49 +125,32 @@ public class GardenElementsMySQL implements GenericDAO {
             pstmt.setInt(4, Integer.parseInt(idFlowerStore));
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("ERROR: Can't update the stock");
         }
     }
-
-
     @Override
-    public void deleteStock(String idFlowerStore, GardenElements gardenElements) {
-        connectMySQL();
-        String query = QueryMySQL.STOCK_REMOVE;
+    public List<GardenElements> showStock(FlowerStore flowerStore) {
+        List<GardenElements> elements = new ArrayList<>();
         try {
-            PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, gardenElements.getQuantity());
-            pstmt.setInt(2, gardenElements.getIdProduct());
-            pstmt.setInt(3, Integer.parseInt(idFlowerStore));
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+            PreparedStatement pstmt = connection.prepareStatement(QueryMySQL.ALLSTOCK_QUERY);
+            pstmt.setInt(1, Integer.parseInt(flowerStore.getId()));
 
-    @Override
-    public HashMap<String, Date> allTickets(String idFlowerStore) {
-        HashMap<String, Date> tickets = new HashMap<>();
-        connectMySQL();
-        String query = QueryMySQL.SHOWALLTICKETS_QUERY;
-
-        try {
-            PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, Integer.parseInt(idFlowerStore));
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    tickets.put(rs.getString("IdTicket"), rs.getDate("Date"));
+                    try{
+                        elements.add(flowerStore.createElement(rs.getInt("IdGardenElements"),rs.getInt("idType"),rs.getString("TypeName"),rs.getString("features"),rs.getDouble("Price"),rs.getInt("Quantity")));
+                    }catch (IllegalArgumentException e){
+                        System.out.println("Error: " + e.getMessage());
+                    }
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("ERROR: Can't show all stock for the florist");
         }
-
-        return tickets;
+        return elements;
     }
-
     @Override
-    public void addTicket(FlowerStore flowerStore, List<GardenElements> gardenElementsList) {
+    public void newTicket(FlowerStore flowerStore, List<GardenElements> gardenElementsList) {
         connectMySQL();
 
         String query = QueryMySQL.ADDNEWTICKET_QUERY;
@@ -209,23 +181,29 @@ public class GardenElementsMySQL implements GenericDAO {
             pstmt.executeBatch();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("ERROR: Can't create a new ticket");
         }
     }
-
-    public void removeFlowerStore(String flowerStoreId) {
-
-        String query = QueryMySQL.REMOVESTORE_QUERY;
+    @Override
+    public HashMap<String, Date> showAllTickets(String idFlowerStore) {
+        HashMap<String, Date> tickets = new HashMap<>();
+        connectMySQL();
+        String query = QueryMySQL.SHOWALLTICKETS_QUERY;
 
         try {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, Integer.parseInt(flowerStoreId));
-            statement.executeUpdate();
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, Integer.parseInt(idFlowerStore));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    tickets.put(rs.getString("IdTicket"), rs.getDate("Date"));
+                }
+            }
         } catch (SQLException e) {
-            System.out.println("Error removing FlowerStore with ID " + flowerStoreId);
+            System.out.println("ERROR: Can't show all tickets for this florist");
         }
-    }
 
+        return tickets;
+    }
     @Override
     public double totalPrice(String flowerShopId) {
         double totalMoneyEarned = 0;
@@ -238,13 +216,15 @@ public class GardenElementsMySQL implements GenericDAO {
                     totalMoneyEarned = rs.getDouble("TotalMoneyEarned");
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println("ERROR: Can't calculate total price");
             }
             return totalMoneyEarned;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println("ERROR: Can't check info about tickets");
         }
+        return totalMoneyEarned;
     }
+
 }
 
 
